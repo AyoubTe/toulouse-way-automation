@@ -1,0 +1,623 @@
+{
+ "name": "Toulouse Way – 4. Décisions de mise en relation (gestionnaire et contacts)",
+ "nodes": [
+  {
+   "parameters": {
+    "content": "## 4. Décisions\nUn seul lien `/webhook/tw-decision?t=…&a=…` pour :\n- le **gestionnaire** : valider ou refuser une proposition ;\n- le **contact** sans accord permanent : accepter ou refuser de partager ses coordonnées.\n\nContact avec *accord_partage = Oui* → les coordonnées sont échangées dès la validation. Sinon → email d'accord au contact, puis échange s'il accepte. Le gestionnaire est prévenu de chaque réponse.",
+    "width": 660,
+    "height": 300
+   },
+   "id": "ae4c23bc-9360-4710-8c5d-e02312830db7",
+   "name": "Note 7522",
+   "type": "n8n-nodes-base.stickyNote",
+   "typeVersion": 1,
+   "position": [
+    -40,
+    -380
+   ]
+  },
+  {
+   "parameters": {
+    "httpMethod": "GET",
+    "path": "tw-decision",
+    "responseMode": "responseNode",
+    "options": {}
+   },
+   "id": "481afc9e-ea44-4353-8746-d5d80d6f6561",
+   "name": "Webhook décision",
+   "type": "n8n-nodes-base.webhook",
+   "typeVersion": 2,
+   "position": [
+    0,
+    0
+   ],
+   "webhookId": "2056d189-dc8a-4a63-bfaa-435d076e049c"
+  },
+  {
+   "parameters": {
+    "documentId": {
+     "__rl": true,
+     "mode": "id",
+     "value": "YOUR_GOOGLE_SHEET_ID"
+    },
+    "sheetName": {
+     "__rl": true,
+     "mode": "name",
+     "value": "Parametres"
+    },
+    "options": {}
+   },
+   "id": "3d40cde1-6105-4936-b786-2d4450ddc0fb",
+   "name": "Paramètres",
+   "type": "n8n-nodes-base.googleSheets",
+   "typeVersion": 4.5,
+   "position": [
+    220,
+    0
+   ],
+   "credentials": {
+    "googleSheetsOAuth2Api": {
+     "id": "",
+     "name": "Google Sheets – Toulouse Way"
+    }
+   },
+   "executeOnce": true,
+   "alwaysOutputData": true
+  },
+  {
+   "parameters": {
+    "documentId": {
+     "__rl": true,
+     "mode": "id",
+     "value": "YOUR_GOOGLE_SHEET_ID"
+    },
+    "sheetName": {
+     "__rl": true,
+     "mode": "name",
+     "value": "Templates"
+    },
+    "options": {}
+   },
+   "id": "6ff1d5eb-851c-454e-9703-eb39db2adae5",
+   "name": "Templates",
+   "type": "n8n-nodes-base.googleSheets",
+   "typeVersion": 4.5,
+   "position": [
+    440,
+    0
+   ],
+   "credentials": {
+    "googleSheetsOAuth2Api": {
+     "id": "",
+     "name": "Google Sheets – Toulouse Way"
+    }
+   },
+   "executeOnce": true,
+   "alwaysOutputData": true
+  },
+  {
+   "parameters": {
+    "documentId": {
+     "__rl": true,
+     "mode": "id",
+     "value": "YOUR_GOOGLE_SHEET_ID"
+    },
+    "sheetName": {
+     "__rl": true,
+     "mode": "name",
+     "value": "Listes"
+    },
+    "options": {}
+   },
+   "id": "68a560de-7124-47db-9848-f35280c14b8a",
+   "name": "Listes",
+   "type": "n8n-nodes-base.googleSheets",
+   "typeVersion": 4.5,
+   "position": [
+    660,
+    0
+   ],
+   "credentials": {
+    "googleSheetsOAuth2Api": {
+     "id": "",
+     "name": "Google Sheets – Toulouse Way"
+    }
+   },
+   "executeOnce": true,
+   "alwaysOutputData": true
+  },
+  {
+   "parameters": {
+    "documentId": {
+     "__rl": true,
+     "mode": "id",
+     "value": "YOUR_GOOGLE_SHEET_ID"
+    },
+    "sheetName": {
+     "__rl": true,
+     "mode": "name",
+     "value": "MisesEnRelation"
+    },
+    "options": {}
+   },
+   "id": "3e135ea3-ebc7-4953-8974-fb1b70bafe0a",
+   "name": "Mises en relation",
+   "type": "n8n-nodes-base.googleSheets",
+   "typeVersion": 4.5,
+   "position": [
+    880,
+    0
+   ],
+   "credentials": {
+    "googleSheetsOAuth2Api": {
+     "id": "",
+     "name": "Google Sheets – Toulouse Way"
+    }
+   },
+   "executeOnce": true,
+   "alwaysOutputData": true
+  },
+  {
+   "parameters": {
+    "documentId": {
+     "__rl": true,
+     "mode": "id",
+     "value": "YOUR_GOOGLE_SHEET_ID"
+    },
+    "sheetName": {
+     "__rl": true,
+     "mode": "name",
+     "value": "Demandeurs"
+    },
+    "options": {}
+   },
+   "id": "5ccc21d9-43ea-42eb-a62b-26d5c2e8a886",
+   "name": "Demandeurs",
+   "type": "n8n-nodes-base.googleSheets",
+   "typeVersion": 4.5,
+   "position": [
+    1100,
+    0
+   ],
+   "credentials": {
+    "googleSheetsOAuth2Api": {
+     "id": "",
+     "name": "Google Sheets – Toulouse Way"
+    }
+   },
+   "executeOnce": true,
+   "alwaysOutputData": true
+  },
+  {
+   "parameters": {
+    "documentId": {
+     "__rl": true,
+     "mode": "id",
+     "value": "YOUR_GOOGLE_SHEET_ID"
+    },
+    "sheetName": {
+     "__rl": true,
+     "mode": "name",
+     "value": "Contacts"
+    },
+    "options": {}
+   },
+   "id": "5dcc731c-0a74-4713-a642-4f2fb75dea30",
+   "name": "Contacts",
+   "type": "n8n-nodes-base.googleSheets",
+   "typeVersion": 4.5,
+   "position": [
+    1320,
+    0
+   ],
+   "credentials": {
+    "googleSheetsOAuth2Api": {
+     "id": "",
+     "name": "Google Sheets – Toulouse Way"
+    }
+   },
+   "executeOnce": true,
+   "alwaysOutputData": true
+  },
+  {
+   "parameters": {
+    "jsCode": "// ===== Toulouse Way – bibliothèque commune (emails, pages, utilitaires) =====\nconst TW = (() => {\n  const DEFAULTS = {\n    nom_asso: 'Toulouse Way', slogan: 'Mieux vivre ici, ensemble',\n    couleur_principale: '#F26716', couleur_encre: '#12343B',\n    logo_url: 'https://www.toulouseway.org/assets/logo.png', site_url: 'https://www.toulouseway.org',\n    email_gestionnaire: 'contact@toulouseway.org', n8n_url: '', signature: \"L'équipe Toulouse Way\",\n    pied_de_page: 'Toulouse Way · Association loi 1901 · Toulouse',\n    score_minimum: '50', max_propositions: '3'\n  };\n  const RTL = ['ar', 'fa', 'he', 'ur'];\n  const esc = s => String(s ?? '').replace(/[&<>\"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', \"'\": '&#39;' }[c]));\n  const list = s => String(s ?? '').split(/[,;]/).map(x => x.trim()).filter(Boolean);\n  const norm = s => String(s ?? '').trim().toLowerCase();\n  const rnd = n => { const a = 'abcdefghijkmnpqrstuvwxyz23456789'; let s = ''; for (let i = 0; i < n; i++) s += a[Math.floor(Math.random() * a.length)]; return s; };\n  const uid = p => `${p}-${Date.now().toString(36).toUpperCase()}${rnd(3).toUpperCase()}`;\n  const token = () => rnd(32);\n\n  function params(rows) {\n    const P = { ...DEFAULTS };\n    for (const r of rows || []) if (r && r.id && String(r.valeur ?? '').trim() !== '') P[String(r.id).trim()] = String(r.valeur).trim();\n    P.n8n_url = String(P.n8n_url).replace(/\\/+$/, '');\n    return P;\n  }\n  const link = (P, path, q) => `${P.n8n_url}/webhook/${path}` + (q ? '?' + Object.entries(q).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&') : '');\n\n  // ---------- Dates (texte « AAAA-MM-JJ », JJ/MM/AAAA ou numéro de série Sheets) ----------\n  function isoDate(v) {\n    if (v === null || v === undefined || v === '') return '';\n    if (typeof v === 'number') { const d = new Date(Date.UTC(1899, 11, 30) + Math.floor(v) * 864e5); return d.toISOString().slice(0, 10); }\n    const s = String(v).trim(); let m;\n    if ((m = s.match(/^(\\d{4})-(\\d{1,2})-(\\d{1,2})/))) return `${m[1]}-${m[2].padStart(2, '0')}-${m[3].padStart(2, '0')}`;\n    if ((m = s.match(/^(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})/))) return `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;\n    return '';\n  }\n  const todayParis = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());\n  const nowParis = () => todayParis() + ' ' + new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit' }).format(new Date());\n  const daysBetween = (a, b) => Math.round((Date.parse(b + 'T00:00:00Z') - Date.parse(a + 'T00:00:00Z')) / 864e5);\n  function longDate(iso, lang) {\n    if (!iso) return '';\n    const d = new Date(iso + 'T12:00:00Z');\n    try { return new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : (lang || 'fr') , { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(d); }\n    catch (e) { return iso; }\n  }\n\n  // ---------- Couleurs ----------\n  function mix(hex, other, t) {\n    const h = x => x.replace('#', '').padEnd(6, '0'); const a = h(hex), b = h(other);\n    return '#' + [0, 2, 4].map(i => Math.round(parseInt(a.substr(i, 2), 16) * (1 - t) + parseInt(b.substr(i, 2), 16) * t).toString(16).padStart(2, '0')).join('');\n  }\n\n  // ---------- Rendu d'un texte de template ----------\n  // {{variable}} = valeur (échappée) · **gras** · [[Texte du bouton|variable_lien]] = bouton\n  // Un bloc qui ne contient que {{details_...}} ou {{liste_...}} insère un encadré HTML.\n  function button(P, label, url, quiet) {\n    const c = P.couleur_principale;\n    const style = quiet\n      ? `display:inline-block;padding:11px 20px;margin:4px 8px 4px 0;border:2px solid ${c};color:${mix(c, '#000000', 0.25)};background:#ffffff;border-radius:999px;font-weight:700;text-decoration:none;font-size:15px`\n      : `display:inline-block;padding:13px 22px;margin:4px 8px 4px 0;background:${c};color:#ffffff;border-radius:999px;font-weight:700;text-decoration:none;font-size:15px`;\n    return `<a href=\"${esc(url)}\" style=\"${style}\">${esc(label)}</a>`;\n  }\n  function renderText(text, vars, P) {\n    const html = {}; for (const k in vars) if (/^(details_|liste_)/.test(k)) html[k] = true;\n    const blocks = String(text ?? '').replace(/\\r/g, '').split(/\\n\\s*\\n/).map(b => b.trim()).filter(Boolean);\n    let nb = 0;\n    return blocks.map(b => {\n      const only = b.match(/^\\{\\{(\\w+)\\}\\}$/);\n      if (only && html[only[1]]) return vars[only[1]] || '';\n      const buttonsOnly = /^(\\s*\\[\\[[^\\]]+\\]\\]\\s*)+$/.test(b);\n      let out = '', last = 0;\n      const re = /\\{\\{(\\w+)\\}\\}|\\[\\[([^\\]|]+)\\|(\\w+)\\]\\]|\\*\\*(.+?)\\*\\*/g; let m;\n      while ((m = re.exec(b))) {\n        out += esc(b.slice(last, m.index)).replace(/\\n/g, '<br>');\n        if (m[1]) out += html[m[1]] ? (vars[m[1]] || '') : esc(vars[m[1]] ?? '');\n        else if (m[2]) out += button(P, m[2].trim(), vars[m[3]] || '#', nb++ > 0);\n        else out += '<strong>' + esc(m[4]).replace(/\\{\\{(\\w+)\\}\\}/g, (_, k) => html[k] ? '' : esc(vars[k] ?? '')) + '</strong>';\n        last = re.lastIndex;\n      }\n      out += esc(b.slice(last)).replace(/\\n/g, '<br>');\n      return buttonsOnly ? `<p style=\"margin:22px 0\">${out}</p>` : `<p style=\"margin:0 0 16px\">${out}</p>`;\n    }).join('\\n');\n  }\n  const fill = (text, vars) => String(text ?? '').replace(/\\{\\{(\\w+)\\}\\}/g, (_, k) => /^(details_|liste_)/.test(k) ? '' : String(vars[k] ?? ''));\n\n  // ---------- Choix des templates selon les langues ----------\n  function pick(templates, cle, langs) {\n    const rows = (templates || []).filter(t => norm(t.cle) === norm(cle) && String(t.contenu || '').trim());\n    const by = {}; for (const t of rows) by[norm(t.langue)] = t;\n    const found = []; for (const l of (langs || []).map(norm)) if (by[l] && !found.includes(by[l])) found.push(by[l]);\n    if (!found.length) for (const l of ['fr', 'en']) if (by[l]) { found.push(by[l]); break; }\n    if (!found.length && rows[0]) found.push(rows[0]);\n    return found;\n  }\n\n  // ---------- Mise en page des emails ----------\n  function layout(P, sections, preheader) {\n    const c = P.couleur_principale, ink = P.couleur_encre;\n    const body = sections.map((s, i) => {\n      const rtl = RTL.includes(norm(s.lang));\n      return `${i ? `<tr><td style=\"padding:0 36px\"><div style=\"border-top:1px dashed ${mix(c, '#ffffff', 0.55)};margin:8px 0 0\"></div></td></tr>` : ''}\n<tr><td dir=\"${rtl ? 'rtl' : 'ltr'}\" lang=\"${esc(s.lang)}\" style=\"padding:28px 36px 12px;text-align:${rtl ? 'right' : 'left'};font-family:'Atkinson Hyperlegible',Arial,Helvetica,sans-serif;font-size:16px;line-height:1.6;color:${ink}\">${s.html}</td></tr>`;\n    }).join('');\n    return `<!doctype html><html><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>${esc(P.nom_asso)}</title></head>\n<body style=\"margin:0;padding:0;background:#EEF2F2\">\n<div style=\"display:none;max-height:0;overflow:hidden;opacity:0\">${esc(preheader || '')}</div>\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#EEF2F2;padding:24px 12px\"><tr><td align=\"center\">\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:600px;background:#ffffff;border-radius:14px;overflow:hidden\">\n<tr><td style=\"padding:22px 36px 18px;border-bottom:4px solid ${c}\">\n  <a href=\"${esc(P.site_url)}\" style=\"text-decoration:none\"><img src=\"${esc(P.logo_url)}\" alt=\"${esc(P.nom_asso)}\" height=\"44\" style=\"height:44px;max-width:220px;display:block;border:0\"></a>\n</td></tr>\n${body}\n<tr><td style=\"padding:12px 36px 28px;font-family:Arial,Helvetica,sans-serif;font-size:15px;color:${ink}\">${esc(P.signature)}</td></tr>\n<tr><td style=\"background:${ink};padding:20px 36px;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.5;color:#D8E3E4\">\n  <div style=\"color:#ffffff;font-weight:700;font-size:15px\">${esc(P.slogan)}</div>\n  <div style=\"margin-top:6px\">${esc(P.pied_de_page)}</div>\n  <div style=\"margin-top:6px\"><a href=\"${esc(P.site_url)}\" style=\"color:${mix(c, '#ffffff', 0.35)}\">${esc(String(P.site_url).replace(/^https?:\\/\\//, ''))}</a></div>\n</td></tr></table></td></tr></table></body></html>`;\n  }\n\n  // Construit un email {sujet, html} à partir d'une clé de template et d'une liste de langues\n  function email(templates, cle, langs, vars, P) {\n    const rows = pick(templates, cle, langs);\n    if (!rows.length) throw new Error(`Template introuvable : ${cle}`);\n    const sujets = [...new Set(rows.map(t => fill(t.sujet, vars).trim()).filter(Boolean))];\n    const sections = rows.map(t => ({ lang: norm(t.langue), html: renderText(t.contenu, vars, P) }));\n    return { sujet: sujets.slice(0, 2).join(' / '), html: layout(P, sections, fill(rows[0].sujet, vars)), langues: rows.map(t => norm(t.langue)) };\n  }\n\n  // ---------- Encadrés ----------\n  function box(P, inner) {\n    return `<div style=\"background:${mix(P.couleur_principale, '#ffffff', 0.9)};border-left:4px solid ${P.couleur_principale};border-radius:10px;padding:16px 18px;margin:6px 0 20px\">${inner}</div>`;\n  }\n  const L = {\n    fr: { date: 'Date', heure: 'Horaire', lieu: 'Lieu', lien: 'En ligne', intervenant: 'Animé par', type: 'Type', metiers: 'Métiers recherchés', langues: 'Langues', ville: 'Ville', parcours: 'Parcours', email: 'Email', tel: 'Téléphone' },\n    en: { date: 'Date', heure: 'Time', lieu: 'Venue', lien: 'Online', intervenant: 'Led by', type: 'Type', metiers: 'Target jobs', langues: 'Languages', ville: 'City', parcours: 'Background', email: 'Email', tel: 'Phone' }\n  };\n  const lab = lang => L[norm(lang)] || L.fr;\n  function rowsTable(rows) {\n    return '<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" style=\"font-size:15px;line-height:1.5\">' +\n      rows.filter(r => r[1]).map(([k, v]) => `<tr><td style=\"padding:3px 16px 3px 0;color:#4A6266;vertical-align:top;white-space:nowrap\">${esc(k)}</td><td style=\"padding:3px 0;vertical-align:top\">${v}</td></tr>`).join('') + '</table>';\n  }\n  function sessionTitle(s, lang) { return (norm(lang) === 'en' && s.titre_en) ? s.titre_en : (s.titre || ''); }\n  function detailsSession(P, s, lang) {\n    const l = lab(lang), iso = isoDate(s.date);\n    const h = s.heure_debut ? (s.heure_fin ? `${s.heure_debut} – ${s.heure_fin}` : s.heure_debut) : '';\n    return box(P, `<div style=\"font-size:18px;font-weight:700;margin-bottom:8px\">${esc(sessionTitle(s, lang))}</div>` + rowsTable([\n      [l.date, esc(longDate(iso, lang))], [l.heure, esc(h)], [l.lieu, esc(s.lieu)],\n      [l.lien, s.lien_visio ? `<a href=\"${esc(s.lien_visio)}\" style=\"color:${P.couleur_principale}\">${esc(s.lien_visio)}</a>` : ''],\n      [l.intervenant, esc(s.intervenant)]\n    ]) + (s.infos_pratiques ? `<div style=\"margin-top:10px\">${esc(s.infos_pratiques)}</div>` : ''));\n  }\n  // Coordonnées d'un contact : sans libellés, donc lisible dans toutes les langues\n  function detailsContact(P, c) {\n    const lines = [\n      `<div style=\"font-size:18px;font-weight:700\">${esc(`${c.prenom || ''} ${c.nom || ''}`.trim())}</div>`,\n      [c.poste, c.entreprise].filter(Boolean).length ? `<div>${esc([c.poste, c.entreprise].filter(Boolean).join(' · '))}</div>` : '',\n      c.email ? `<div>✉️ <a dir=\"ltr\" href=\"mailto:${esc(c.email)}\" style=\"color:${P.couleur_principale};unicode-bidi:isolate\">${esc(c.email)}</a></div>` : '',\n      c.telephone ? `<div>📞 <a dir=\"ltr\" href=\"tel:${esc(String(c.telephone).replace(/\\s/g, ''))}\" style=\"color:${P.couleur_principale};unicode-bidi:isolate\">${esc(c.telephone)}</a></div>` : '',\n      c.ville ? `<div>📍 ${esc(c.ville)}</div>` : ''\n    ];\n    return box(P, lines.join(''));\n  }\n  function libelles(listes, type, codes, lang) {\n    const m = {}; for (const r of listes || []) if (norm(r.type) === type) m[norm(r.code)] = (norm(lang) === 'en' && r.libelle_en) ? r.libelle_en : (r.libelle_fr || r.code);\n    return list(codes).map(c => m[norm(c)] || c).join(', ');\n  }\n  function detailsDemandeur(P, d, lang, listes, withContact) {\n    const l = lab(lang);\n    return box(P, `<div style=\"font-size:18px;font-weight:700;margin-bottom:8px\">${esc(`${d.prenom || ''} ${d.nom || ''}`.trim())}</div>` + rowsTable([\n      [l.metiers, esc(libelles(listes, 'metier', d.metiers, lang))], [l.langues, esc(libelles(listes, 'langue', d.langues, lang))],\n      [l.ville, esc(d.ville)], [l.parcours, esc(d.parcours)],\n      [l.email, withContact && d.email ? `<a href=\"mailto:${esc(d.email)}\" style=\"color:${P.couleur_principale}\">${esc(d.email)}</a>` : ''],\n      [l.tel, withContact ? esc(d.telephone) : '']\n    ]));\n  }\n\n  // ---------- Page de réponse (après un clic dans un email) ----------\n  function page(P, o) {\n    const c = P.couleur_principale, ink = P.couleur_encre;\n    const tone = { ok: '#2E7D5B', warn: '#B7791F', err: '#B23A2E' }[o.tone || 'ok'];\n    const rtl = RTL.includes(norm(o.lang));\n    return `<!doctype html><html lang=\"${esc(o.lang || 'fr')}\" dir=\"${rtl ? 'rtl' : 'ltr'}\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>${esc(o.title)} – ${esc(P.nom_asso)}</title>\n<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link href=\"https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap\" rel=\"stylesheet\">\n<style>body{margin:0;min-height:100vh;display:flex;flex-direction:column;background:#EEF2F2;font-family:'Atkinson Hyperlegible',Arial,sans-serif;color:${ink}}\nheader{padding:18px 24px;background:#fff;border-bottom:4px solid ${c}}header img{height:40px}\nmain{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 16px}\n.card{background:#fff;border-radius:18px;max-width:520px;width:100%;padding:36px 32px;box-shadow:0 1px 0 rgba(18,52,59,.06),0 12px 32px -18px rgba(18,52,59,.35)}\n.mark{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:${tone}1A;color:${tone};font-size:26px;font-weight:700}\nh1{font-family:'Bricolage Grotesque',Arial,sans-serif;font-weight:800;font-size:28px;line-height:1.15;margin:18px 0 10px}\np{font-size:17px;line-height:1.6;margin:0 0 12px}a.btn{display:inline-block;margin-top:10px;padding:12px 20px;border-radius:999px;background:${c};color:#fff;text-decoration:none;font-weight:700}\nfooter{padding:18px;text-align:center;font-size:14px;color:#4A6266}</style></head>\n<body><header><a href=\"${esc(P.site_url)}\"><img src=\"${esc(P.logo_url)}\" alt=\"${esc(P.nom_asso)}\"></a></header>\n<main><div class=\"card\"><div class=\"mark\">${o.tone === 'err' ? '!' : o.tone === 'warn' ? 'i' : '✓'}</div><h1>${esc(o.title)}</h1>${(o.paras || []).map(p => `<p>${esc(p)}</p>`).join('')}${o.cta ? `<a class=\"btn\" href=\"${esc(o.cta.url)}\">${esc(o.cta.label)}</a>` : ''}</div></main>\n<footer>${esc(P.slogan)} · ${esc(P.nom_asso)}</footer></body></html>`;\n  }\n\n  return { DEFAULTS, RTL, esc, list, norm, uid, token, params, link, isoDate, todayParis, nowParis, daysBetween, longDate, mix,\n    renderText, fill, pick, layout, email, button, box, detailsSession, detailsContact, detailsDemandeur, libelles, sessionTitle, page };\n})();\n\n// Traite un clic : décision du gestionnaire (valider/refuser) ou réponse du contact (accepter/refuser)\nconst P = TW.params($('Paramètres').all().map(i => i.json));\nconst T = $('Templates').all().map(i => i.json);\nconst L = $('Listes').all().map(i => i.json);\nconst MER = $('Mises en relation').all().map(i => i.json).filter(m => m.id);\nconst DEM = $('Demandeurs').all().map(i => i.json).filter(d => d.id);\nconst CON = $('Contacts').all().map(i => i.json).filter(c => c.id);\nconst q = $('Webhook décision').first().json.query || {};\nconst json = q.format === 'json', t = String(q.t || ''), a = String(q.a || '');\nconst now = TW.nowParis(), today = TW.todayParis();\nconst out = { mer: null, dem: null, con: null, emails: [] };\nconst base = { from_name: P.nom_asso, reply_to: P.email_gestionnaire };\nconst admin = TW.link(P, 'tw-gestion') + '#demandes';\n\nfunction reply(ok, title, paras, lang, tone) {\n  const body = json ? JSON.stringify({ ok, message: [title].concat(paras || []).join(' ') })\n    : TW.page(P, { title, paras, lang: lang || 'fr', tone: tone || (ok ? 'ok' : 'warn') });\n  return [{ json: Object.assign({ body, contentType: json ? 'application/json' : 'text/html; charset=utf-8' }, out) }];\n}\nconst hist = (m, txt) => (m.historique ? m.historique + '\\n' : '') + `${now} – ${txt}`;\n\nconst m = t.length >= 16 ? MER.find(x => x.token === t) || MER.find(x => x.token_contact === t) : null;\nif (!m) return reply(false, 'Lien non valide', [\"Ce lien n'existe pas ou a été copié de façon incomplète.\"], 'fr', 'err');\nconst role = m.token === t ? 'gestionnaire' : 'contact';\nconst d = DEM.find(x => x.id === m.demandeur_id), c = CON.find(x => x.id === m.contact_id);\nconst cl = TW.norm(c && c.langue_contact) === 'en' ? 'en' : 'fr';\nconst TXT = {\n  fr: { doneT: 'Merci pour votre réponse', already: 'Vous avez déjà répondu à cette demande. Merci !', accT: 'Merci, c’est noté !', accP: `Vos coordonnées ont été transmises à ${d ? d.prenom : 'la personne'}, qui va vous contacter prochainement.`, refT: 'Réponse enregistrée', refP: \"Aucune information n'a été transmise. Merci d'avoir pris le temps de répondre.\" },\n  en: { doneT: 'Thank you for your answer', already: 'You have already answered this request. Thank you!', accT: 'Thank you, all set!', accP: `Your contact details have been shared with ${d ? d.prenom : 'the person'}, who will get in touch soon.`, refT: 'Answer recorded', refP: 'No information has been shared. Thank you for taking the time to reply.' }\n}[cl];\n\n// Envoi des coordonnées croisées (demandeur ← contact, contact ← demandeur)\nfunction introduce() {\n  const e1 = TW.email(T, 'mise_en_relation_demandeur', TW.list(d.langues), { prenom: d.prenom, contact_prenom: c.prenom, details_contact: TW.detailsContact(P, c) }, P);\n  const e2 = TW.email(T, 'mise_en_relation_contact', [cl], { prenom: c.prenom, demandeur_prenom: d.prenom, details_demandeur: TW.detailsDemandeur(P, d, cl, L, true) }, P);\n  out.emails.push({ ...base, to: d.email, sujet: e1.sujet, html: e1.html }, { ...base, to: c.email, sujet: e2.sujet, html: e2.html });\n  out.dem = { id: d.id, statut: 'Mis en relation', date_mise_en_relation: today };\n  out.con = { id: c.id, nb_mises_en_relation: (Number(c.nb_mises_en_relation) || 0) + 1, derniere_mise_en_relation: today };\n}\n\nif (role === 'gestionnaire') {\n  if (m.statut !== 'À valider') return reply(false, 'Déjà traitée', [`Cette proposition a déjà été traitée (statut : ${m.statut}).`]);\n  if (a === 'refuser') {\n    out.mer = { id: m.id, statut: 'Refusée', date_decision: now, historique: hist(m, 'refusée par le gestionnaire') };\n    return reply(true, 'Proposition refusée', [`Aucun email n'a été envoyé à ${m.contact_nom}.`]);\n  }\n  if (a !== 'valider') return reply(false, 'Action inconnue', ['Utilisez les boutons Valider ou Refuser.'], 'fr', 'err');\n  if (!d || !c) return reply(false, 'Fiche introuvable', ['Le demandeur ou le contact a été supprimé de la base.'], 'fr', 'err');\n  if (TW.norm(c.accord_partage) === 'oui') {\n    introduce();\n    out.mer = { id: m.id, statut: 'Envoyée', date_decision: now, historique: hist(m, 'validée, coordonnées échangées') };\n    return reply(true, 'Mise en relation envoyée', [`${d.prenom} et ${c.prenom} ont chacun reçu les coordonnées de l'autre.`]);\n  }\n  const tc = TW.token();\n  const e = TW.email(T, 'accord_contact', [cl], {\n    prenom: c.prenom, demandeur_prenom: d.prenom, details_demandeur: TW.detailsDemandeur(P, d, cl, L, false),\n    lien_accepter: TW.link(P, 'tw-decision', { t: tc, a: 'accepter' }), lien_refuser: TW.link(P, 'tw-decision', { t: tc, a: 'refuser' })\n  }, P);\n  out.emails.push({ ...base, to: c.email, sujet: e.sujet, html: e.html });\n  out.mer = { id: m.id, statut: 'En attente du contact', token_contact: tc, date_decision: now, historique: hist(m, \"validée, demande d'accord envoyée au contact\") };\n  return reply(true, \"Demande d'accord envoyée\", [`${c.prenom} n'a pas donné d'accord permanent : il ou elle reçoit un email pour accepter ou refuser. Vous serez prévenu·e de sa réponse.`]);\n}\n\n// Réponse du contact\nif (m.statut !== 'En attente du contact') return reply(true, TXT.doneT, [TXT.already], cl);\nif (!d || !c) return reply(false, TXT.doneT, [TXT.already], cl);\nif (a === 'accepter') {\n  introduce();\n  out.mer = { id: m.id, statut: 'Envoyée', date_decision: now, historique: hist(m, 'acceptée par le contact, coordonnées échangées') };\n  const g = TW.email(T, 'gestionnaire_reponse_contact', ['fr'], { contact_nom: m.contact_nom, demandeur_nom: m.demandeur_nom, reponse: 'accepté', suite: 'Les coordonnées ont été échangées automatiquement.', lien_admin: admin }, P);\n  out.emails.push({ ...base, to: P.email_gestionnaire, sujet: g.sujet, html: g.html });\n  return reply(true, TXT.accT, [TXT.accP], cl);\n}\nif (a === 'refuser') {\n  out.mer = { id: m.id, statut: 'Refusée par le contact', date_decision: now, historique: hist(m, 'refusée par le contact') };\n  const autres = MER.filter(x => x.demandeur_id === d.id && x.id !== m.id && ['À valider', 'En attente du contact', 'Envoyée'].includes(x.statut));\n  if (!autres.length && d.statut === 'Proposé') out.dem = { id: d.id, statut: 'À traiter manuellement' };\n  const g = TW.email(T, 'gestionnaire_reponse_contact', ['fr'], { contact_nom: m.contact_nom, demandeur_nom: m.demandeur_nom, reponse: 'refusé',\n    suite: autres.length ? \"D'autres propositions sont encore en cours pour cette demande.\" : 'Plus aucune proposition en cours : la demande est passée « À traiter manuellement ». Remettez-la sur « Nouveau » pour relancer la recherche.', lien_admin: admin }, P);\n  out.emails.push({ ...base, to: P.email_gestionnaire, sujet: g.sujet, html: g.html });\n  return reply(true, TXT.refT, [TXT.refP], cl);\n}\nreturn reply(false, TXT.doneT, [TXT.already], cl);\n"
+   },
+   "id": "46b95726-108f-4696-8638-80738c8431d2",
+   "name": "Décider",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    1540,
+    0
+   ]
+  },
+  {
+   "parameters": {
+    "jsCode": "const v = $('Décider').first().json.mer;\nreturn (Array.isArray(v) ? v : (v ? [v] : [])).map(x => ({ json: x }));"
+   },
+   "id": "6783989b-72c0-4d2a-bb96-f76eba203160",
+   "name": "Proposition à jour",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    1780,
+    -240
+   ]
+  },
+  {
+   "parameters": {
+    "operation": "update",
+    "documentId": {
+     "__rl": true,
+     "mode": "id",
+     "value": "YOUR_GOOGLE_SHEET_ID"
+    },
+    "sheetName": {
+     "__rl": true,
+     "mode": "name",
+     "value": "MisesEnRelation"
+    },
+    "columns": {
+     "mappingMode": "autoMapInputData",
+     "value": {},
+     "matchingColumns": [
+      "id"
+     ],
+     "schema": []
+    },
+    "options": {}
+   },
+   "id": "c84266d9-e60b-4c68-b0a6-884f9d56800d",
+   "name": "Mettre à jour la proposition",
+   "type": "n8n-nodes-base.googleSheets",
+   "typeVersion": 4.5,
+   "position": [
+    2000,
+    -240
+   ],
+   "credentials": {
+    "googleSheetsOAuth2Api": {
+     "id": "",
+     "name": "Google Sheets – Toulouse Way"
+    }
+   }
+  },
+  {
+   "parameters": {
+    "jsCode": "const v = $('Décider').first().json.dem;\nreturn (Array.isArray(v) ? v : (v ? [v] : [])).map(x => ({ json: x }));"
+   },
+   "id": "36d1f694-7815-42bf-b0a7-c818e6a87e2f",
+   "name": "Demande à jour",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    1780,
+    -80
+   ]
+  },
+  {
+   "parameters": {
+    "operation": "update",
+    "documentId": {
+     "__rl": true,
+     "mode": "id",
+     "value": "YOUR_GOOGLE_SHEET_ID"
+    },
+    "sheetName": {
+     "__rl": true,
+     "mode": "name",
+     "value": "Demandeurs"
+    },
+    "columns": {
+     "mappingMode": "autoMapInputData",
+     "value": {},
+     "matchingColumns": [
+      "id"
+     ],
+     "schema": []
+    },
+    "options": {}
+   },
+   "id": "8cf05449-0da1-4c67-b837-543c5a451037",
+   "name": "Mettre à jour la demande",
+   "type": "n8n-nodes-base.googleSheets",
+   "typeVersion": 4.5,
+   "position": [
+    2000,
+    -80
+   ],
+   "credentials": {
+    "googleSheetsOAuth2Api": {
+     "id": "",
+     "name": "Google Sheets – Toulouse Way"
+    }
+   }
+  },
+  {
+   "parameters": {
+    "jsCode": "const v = $('Décider').first().json.con;\nreturn (Array.isArray(v) ? v : (v ? [v] : [])).map(x => ({ json: x }));"
+   },
+   "id": "41d5204c-78d5-4fce-98dd-4e5df6164669",
+   "name": "Contact à jour",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    1780,
+    80
+   ]
+  },
+  {
+   "parameters": {
+    "operation": "update",
+    "documentId": {
+     "__rl": true,
+     "mode": "id",
+     "value": "YOUR_GOOGLE_SHEET_ID"
+    },
+    "sheetName": {
+     "__rl": true,
+     "mode": "name",
+     "value": "Contacts"
+    },
+    "columns": {
+     "mappingMode": "autoMapInputData",
+     "value": {},
+     "matchingColumns": [
+      "id"
+     ],
+     "schema": []
+    },
+    "options": {}
+   },
+   "id": "f78fbb80-2e24-4c34-9c56-d21bf77e07fa",
+   "name": "Mettre à jour le contact",
+   "type": "n8n-nodes-base.googleSheets",
+   "typeVersion": 4.5,
+   "position": [
+    2000,
+    80
+   ],
+   "credentials": {
+    "googleSheetsOAuth2Api": {
+     "id": "",
+     "name": "Google Sheets – Toulouse Way"
+    }
+   }
+  },
+  {
+   "parameters": {
+    "respondWith": "text",
+    "responseBody": "={{ $json.body }}",
+    "options": {
+     "responseHeaders": {
+      "entries": [
+       {
+        "name": "Content-Type",
+        "value": "={{ $json.contentType }}"
+       },
+       {
+        "name": "Cache-Control",
+        "value": "no-store"
+       }
+      ]
+     }
+    }
+   },
+   "id": "89acc597-4134-45e0-b2e8-fc53d0e07a0f",
+   "name": "Répondre",
+   "type": "n8n-nodes-base.respondToWebhook",
+   "typeVersion": 1.1,
+   "position": [
+    1780,
+    240
+   ]
+  },
+  {
+   "parameters": {
+    "jsCode": "const v = $('Décider').first().json.emails;\nreturn (Array.isArray(v) ? v : (v ? [v] : [])).map(x => ({ json: x }));"
+   },
+   "id": "286a5531-8459-46df-8ae1-6b9a3bfae7e8",
+   "name": "Emails (décision)",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    1780,
+    400
+   ]
+  },
+  {
+   "parameters": {
+    "sendTo": "={{ $json.to }}",
+    "subject": "={{ $json.sujet }}",
+    "emailType": "html",
+    "message": "={{ $json.html }}",
+    "options": {
+     "appendAttribution": false,
+     "senderName": "={{ $json.from_name }}",
+     "replyTo": "={{ $json.reply_to }}"
+    }
+   },
+   "id": "c226ff81-e342-4397-89b9-866e1af89cdb",
+   "name": "Envoyer (décision)",
+   "type": "n8n-nodes-base.gmail",
+   "typeVersion": 2.1,
+   "position": [
+    2000,
+    400
+   ],
+   "credentials": {
+    "gmailOAuth2": {
+     "id": "",
+     "name": "Gmail – Toulouse Way"
+    }
+   },
+   "webhookId": "921904e8-b9c1-4773-857e-2448db02caf6"
+  }
+ ],
+ "connections": {
+  "Webhook décision": {
+   "main": [
+    [
+     {
+      "node": "Paramètres",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Paramètres": {
+   "main": [
+    [
+     {
+      "node": "Templates",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Templates": {
+   "main": [
+    [
+     {
+      "node": "Listes",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Listes": {
+   "main": [
+    [
+     {
+      "node": "Mises en relation",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Mises en relation": {
+   "main": [
+    [
+     {
+      "node": "Demandeurs",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Demandeurs": {
+   "main": [
+    [
+     {
+      "node": "Contacts",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Contacts": {
+   "main": [
+    [
+     {
+      "node": "Décider",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Décider": {
+   "main": [
+    [
+     {
+      "node": "Proposition à jour",
+      "type": "main",
+      "index": 0
+     },
+     {
+      "node": "Demande à jour",
+      "type": "main",
+      "index": 0
+     },
+     {
+      "node": "Contact à jour",
+      "type": "main",
+      "index": 0
+     },
+     {
+      "node": "Répondre",
+      "type": "main",
+      "index": 0
+     },
+     {
+      "node": "Emails (décision)",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Proposition à jour": {
+   "main": [
+    [
+     {
+      "node": "Mettre à jour la proposition",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Demande à jour": {
+   "main": [
+    [
+     {
+      "node": "Mettre à jour la demande",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Contact à jour": {
+   "main": [
+    [
+     {
+      "node": "Mettre à jour le contact",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Emails (décision)": {
+   "main": [
+    [
+     {
+      "node": "Envoyer (décision)",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  }
+ },
+ "active": false,
+ "settings": {
+  "executionOrder": "v1",
+  "timezone": "Europe/Paris",
+  "saveManualExecutions": true
+ },
+ "pinData": {},
+ "meta": {
+  "templateCredsSetupCompleted": false
+ },
+ "tags": []
+}

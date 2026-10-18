@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Espace gestion – Toulouse Way</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<style>
+/*__CSS__*/
+body{background:var(--mist)}
+/* Connexion */
+#login{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr}
+.login-side{background:var(--ink);color:#fff;padding:48px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.login-side .logo{display:inline-flex;background:#fff;border-radius:12px;padding:8px 12px;align-self:flex-start}.login-side .logo img{height:38px}
+.login-side h1{font-size:clamp(36px,4.6vw,60px);font-weight:800;max-width:12ch}
+.login-side p{color:#D8E3E4;font-size:18px;max-width:40ch}
+.login-side svg{position:absolute;inset-inline:0;bottom:90px;width:100%;height:90px}
+.login-form{display:flex;align-items:center;justify-content:center;padding:32px 20px}
+.login-form form{width:100%;max-width:380px}
+.login-form h2{font-size:30px;margin-bottom:6px}.login-form p{color:var(--muted);margin:0 0 24px}
+@media (max-width:820px){#login{grid-template-columns:1fr}.login-side{padding:24px;min-height:auto}.login-side h1{font-size:32px;margin-top:28px}.login-side p,.login-side svg{display:none}}
+/* Application */
+#app{display:none;min-height:100vh;grid-template-columns:248px 1fr}
+#app.on{display:grid}
+#app.on{grid-template-columns:248px minmax(0,1fr)}
+aside{background:var(--ink);color:#fff;padding:20px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px}
+aside .logo{background:#fff;border-radius:12px;padding:8px 12px;display:inline-flex;margin:0 6px 18px;align-self:flex-start}aside .logo img{height:32px}
+nav.main a{display:flex;align-items:center;gap:12px;color:#D8E3E4;text-decoration:none;padding:10px 12px;border-radius:10px;font-weight:700}
+nav.main a:hover{background:rgba(255,255,255,.08);color:#fff}
+nav.main a[aria-current=page]{background:#fff;color:var(--ink)}
+nav.main svg{width:20px;height:20px;flex:none}
+nav.main .count{margin-inline-start:auto;background:var(--orange);color:#fff;border-radius:999px;font-size:12px;padding:1px 8px}
+aside .bottom{margin-top:auto;padding:12px;border-top:1px solid rgba(255,255,255,.15);font-size:14px;color:#B9CBCD}
+aside .bottom button{background:none;border:0;color:#fff;text-decoration:underline;cursor:pointer;padding:0;margin-top:6px}
+.content{padding:28px clamp(16px,3vw,40px) 60px;min-width:0}
+.head{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
+.head h1{font-size:34px;font-weight:800}.head p{margin:6px 0 0;color:var(--muted)}
+.head .tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+nav.main a .short{display:none}
+.m-top{display:none}
+@media (max-width:900px){
+ #app.on{grid-template-columns:minmax(0,1fr)}
+ .m-top{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--ink);padding:10px 16px;position:sticky;top:0;z-index:40}
+ .m-top .logo{background:#fff;border-radius:10px;padding:5px 9px;display:inline-flex}.m-top .logo img{height:26px}
+ .m-top button{background:none;border:1.5px solid rgba(255,255,255,.35);color:#fff;border-radius:999px;padding:6px 12px;font-weight:700;font-size:14px;cursor:pointer}
+ aside{position:fixed;inset:auto 0 0 0;top:auto;height:auto;z-index:50;flex-direction:row;padding:6px 6px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(18,52,59,.25)}
+ aside .logo,aside .bottom{display:none}
+ nav.main{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px;width:100%}
+ nav.main a{flex-direction:column;gap:3px;padding:7px 1px;font-size:11px;letter-spacing:-.01em;line-height:1.1;text-align:center;position:relative;border-radius:10px}
+ nav.main a .lbl{display:none}nav.main a .short{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+ nav.main a .count{position:absolute;top:2px;inset-inline-end:calc(50% - 20px);margin:0;padding:0 6px;font-size:11px}
+ .content{padding-bottom:110px}
+ .toast{bottom:84px}
+}
+/* Panneaux */
+.panel{background:#fff;border-radius:var(--r-md);padding:22px 24px;margin-bottom:20px}
+.panel h2{font-size:21px;margin-bottom:4px}.panel .sub{color:var(--muted);font-size:15px;margin:0 0 16px}
+.cols{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:20px}.cols>.panel{margin-bottom:0}
+@media (max-width:1100px){.cols{grid-template-columns:minmax(0,1fr)}}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border-radius:var(--r-md);overflow:hidden;margin-bottom:20px}
+.kpi{background:#fff;padding:18px 20px}
+.kpi b{display:block;font-family:var(--f-display);font-size:40px;font-weight:800;line-height:1}
+.kpi span{display:block;margin-top:8px;font-weight:700}.kpi small{display:block;color:var(--muted);font-size:14px;margin-top:2px}
+@media (max-width:760px){.kpis{grid-template-columns:1fr 1fr}}
+/* Graphique inscriptions */
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:14px;color:var(--ink-2);margin-bottom:14px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-inline-end:6px;vertical-align:-1px}
+.sw-c{background:var(--s-confirme)}.sw-a{background:var(--s-attente)}.sw-x{background:repeating-linear-gradient(45deg,#B9C4C6 0 3px,#E3E9EA 3px 6px)}
+.bars{display:flex;flex-direction:column;gap:14px}
+.bar-row{display:grid;grid-template-columns:minmax(140px,240px) 1fr;gap:14px;align-items:center}
+.bar-label{font-size:14px;line-height:1.3}.bar-label b{display:block;font-size:15px}.bar-label span{color:var(--muted)}
+.bar-track{position:relative;height:22px;margin-inline-end:72px}
+.bar-fill{position:absolute;inset-block:0;display:flex;gap:2px}
+.seg{height:100%;min-width:3px;cursor:default}.seg:first-child{border-radius:4px 0 0 4px}.seg:last-child{border-radius:0 4px 4px 0}.seg:only-child{border-radius:4px}
+.seg.c{background:var(--s-confirme)}.seg.a{background:var(--s-attente)}.seg.x{background:repeating-linear-gradient(45deg,#B9C4C6 0 3px,#E3E9EA 3px 6px)}
+.cap{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);border-radius:1px}
+.bar-val{position:absolute;top:50%;transform:translateY(-50%);font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap}
+.axis{display:grid;grid-template-columns:minmax(140px,240px) 1fr;gap:14px;margin-top:6px}.axis .ticks{position:relative;height:18px;border-top:1px solid var(--line);margin-inline-end:72px}.axis .ticks span{position:absolute;top:3px;font-size:12px;color:var(--muted);transform:translateX(-50%)}
+@media (max-width:600px){.bar-row,.axis{grid-template-columns:1fr;gap:4px}.axis>div:first-child{display:none}}
+.tip{position:fixed;z-index:90;background:var(--ink);color:#fff;font-size:13px;padding:8px 10px;border-radius:8px;pointer-events:none;display:none;max-width:260px;line-height:1.4}
+.seg-toggle{display:inline-flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden}
+.seg-toggle button{border:0;background:#fff;padding:6px 14px;font-weight:700;font-size:14px;cursor:pointer}
+.seg-toggle button[aria-pressed=true]{background:var(--ink);color:#fff}
+/* Pipeline */
+.pipe{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.step{flex:1 1 92px;background:var(--mist);border-radius:10px;padding:12px 14px;position:relative}
+.step b{font-family:var(--f-display);font-size:28px;font-weight:800;display:block;line-height:1.1}.step span{font-size:14px;color:var(--ink-2)}
+.step.hot{background:var(--orange-soft)}.step.good{background:var(--ok-soft)}
+.side-stats{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px;font-size:14px;color:var(--muted)}.side-stats b{color:var(--ink)}
+/* Tables */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.toolbar .input,.toolbar .select{width:auto;min-width:200px;flex:1 1 200px;max-width:340px}
+
+.tscroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--r-md)}
+table.t{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--r-md);overflow:hidden}
+.t th{text-align:start;font-size:13px;color:var(--muted);font-weight:700;padding:12px 14px;border-bottom:1px solid var(--line);background:#fff}
+.t td{padding:12px 14px;border-bottom:1px solid var(--mist);vertical-align:top;font-size:15px}
+.t tr.click{cursor:pointer}.t tr.click:hover td{background:#FAFBFB}
+.t td .muted{color:var(--muted);font-size:14px}
+.t .num{text-align:end;font-variant-numeric:tabular-nums}
+.mini-meter{display:flex;align-items:center;gap:8px}.mini-meter i{display:block;width:80px;height:6px;border-radius:3px;background:var(--mist);overflow:hidden}.mini-meter i b{display:block;height:100%;background:var(--orange)}
+@media (max-width:900px) and (min-width:761px){.t td,.t th{padding:10px 10px}.t td{font-size:14px}}
+@media (max-width:760px){.t thead{display:none}.t,.t tbody,.t tr,.t td{display:block;width:100%}.t tr{border-bottom:8px solid var(--mist)}.t td{border:0;padding:6px 14px}.t td[data-l]::before{content:attr(data-l);display:block;font-size:12px;color:var(--muted);font-weight:700}.t .num{text-align:start}}
+.empty{background:#fff;border-radius:var(--r-md);padding:36px;text-align:center;color:var(--muted)}
+.todo{list-style:none;margin:0;padding:0}
+.todo li{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--mist);flex-wrap:wrap}
+.todo li:last-child{border-bottom:0}.todo .who{min-width:0}.todo .who b{display:block}.todo .who span{color:var(--muted);font-size:14px}
+.todo .acts{display:flex;gap:8px}
+/* Tiroir */
+.drawer-bg{position:fixed;inset:0;background:rgba(18,52,59,.45);z-index:60;display:none}
+.drawer{position:fixed;top:0;inset-inline-end:0;height:100vh;width:min(620px,100vw);background:#fff;z-index:61;display:flex;flex-direction:column;transform:translateX(105%);transition:transform .22s ease}
+.drawer.open{transform:none}.drawer-bg.open{display:block}
+.drawer header{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.drawer header h2{font-size:24px}.drawer header p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.drawer .body{flex:1;overflow:auto;padding:22px 24px}
+.drawer footer{padding:14px 24px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}
+.drawer footer .r{display:flex;gap:10px;margin-inline-start:auto}
+.x{border:0;background:var(--mist);width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:20px;flex:none}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:-6px 0 18px;overflow-x:auto}
+.tabs button{border:0;background:none;padding:10px 12px;font-weight:700;color:var(--muted);border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--orange)}
+.switch{display:flex;align-items:flex-start;gap:12px;cursor:pointer}
+.switch input{appearance:none;width:44px;height:26px;border-radius:999px;background:var(--line);position:relative;flex:none;cursor:pointer;transition:background .15s;margin:0}
+.switch input::after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.switch input:checked{background:var(--ok)}.switch input:checked::after{transform:translateX(18px)}
+[dir=rtl] .switch input:checked::after{transform:translateX(-18px)}
+.switch b{display:block}.switch span{color:var(--muted);font-size:14px}
+.dl{display:grid;grid-template-columns:140px 1fr;gap:8px 16px;margin:0 0 20px}.dl dt{color:var(--muted);font-size:14px}.dl dd{margin:0}
+.props{list-style:none;padding:0;margin:0}.props li{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.props .top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+.props .why{font-size:14px;color:var(--muted);margin-top:4px}.props .acts{display:flex;gap:8px;margin-top:10px}
+/* Templates */
+.tpl-layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:20px;align-items:start}
+.tpl-layout>*,.tpl-edit>*,.cols>*,.grid-2>*{min-width:0}
+@media (max-width:1000px){.tpl-layout{grid-template-columns:minmax(0,1fr)}.tpl-list{display:none}.tpl-pick{display:flex!important}}
+.tpl-pick{display:none}
+.lang-pick{display:none}
+.lang-tabs{margin-bottom:10px}.lang-add{display:flex;justify-content:flex-end;margin:0 0 16px}.lang-add:empty{display:none}
+@media (max-width:1000px){.lang-tabs{display:none}.lang-pick{display:flex}}
+.tpl-list{background:#fff;border-radius:var(--r-md);padding:10px}
+.tpl-list h3{font-size:14px;color:var(--muted);font-family:var(--f-body);font-weight:700;margin:12px 10px 6px}
+.tpl-list button{display:block;width:100%;text-align:start;border:0;background:none;border-radius:8px;padding:9px 10px;cursor:pointer}
+.tpl-list button:hover{background:var(--mist)}.tpl-list button[aria-current=true]{background:var(--orange-soft)}
+.tpl-list button b{display:block;font-size:15px}.tpl-list button span{font-size:13px;color:var(--muted)}
+.tpl-edit{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+@media (max-width:1600px){.tpl-edit{grid-template-columns:minmax(0,1fr)}}
+.vars{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 14px}
+.vars button{border:1px dashed var(--line);background:var(--mist);border-radius:6px;padding:3px 8px;font-size:13px;cursor:pointer;font-family:ui-monospace,Menlo,monospace}
+.vars button:hover{border-color:var(--ink)}
+.textarea.code{min-height:320px;font-size:15px;line-height:1.6}
+.preview{border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;background:#EEF2F2}
+.preview .pv-head{background:#fff;padding:10px 14px;font-size:14px;border-bottom:1px solid var(--line)}
+.preview iframe{width:100%;height:620px;border:0;display:block;background:#EEF2F2}
+.help{background:var(--mist);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--ink-2);margin-bottom:16px}
+.help code{background:#fff;border-radius:4px;padding:1px 5px;overflow-wrap:anywhere}
+.preview iframe{max-width:100%}
+@media (max-width:600px){.preview iframe{height:520px}.panel{padding:18px 16px}.head h1{font-size:28px}.drawer .body,.drawer header,.drawer footer{padding-left:16px;padding-right:16px}.dl{grid-template-columns:1fr;gap:2px}.dl dd{margin-bottom:8px}.kpi b{font-size:32px}}
+.links .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--mist)}
+.links .row:last-child{border-bottom:0}.links .row b{min-width:180px}.links code{flex:1;min-width:0;overflow-wrap:anywhere;background:var(--mist);padding:6px 10px;border-radius:6px;font-size:13px}
+.color-in{display:flex;gap:8px;align-items:center}.color-in input[type=color]{width:46px;height:46px;border:1.5px solid var(--line);border-radius:8px;padding:2px;background:#fff}
+.loading{position:fixed;top:0;inset-inline:0;height:3px;background:var(--orange);transform-origin:left;animation:ld 1.2s ease-in-out infinite;z-index:95;display:none}
+@keyframes ld{0%{transform:scaleX(0)}50%{transform:scaleX(.7)}100%{transform:scaleX(1);opacity:0}}
+</style>
+</head>
+<body>
+<div class="loading" id="loading"></div>
+<section id="login">
+  <div class="login-side">
+    <span class="logo"><img id="lg-logo" alt=""></span>
+    <div><h1 id="lg-slogan"></h1><p>Demandes de mise en relation, contacts, formations et événements : tout se pilote d'ici.</p></div>
+    <svg viewBox="0 0 1200 90" preserveAspectRatio="none" aria-hidden="true"><path d="M-10 62 C 200 14, 360 84, 580 44 S 920 6, 1080 40 S 1180 70, 1215 40" fill="none" stroke="var(--orange)" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 14"/></svg>
+    <span></span>
+  </div>
+  <div class="login-form">
+    <form id="lf" novalidate>
+      <h2>Espace gestion</h2><p>Connectez-vous avec l'identifiant de l'association.</p>
+      <div class="alert-box" id="lerr" role="alert" style="display:none;background:var(--err-soft);color:var(--err);padding:12px 14px;border-radius:8px;margin-bottom:16px"></div>
+      <div class="field"><label for="lu">Identifiant</label><input class="input" id="lu" autocomplete="username" required></div>
+      <div class="field"><label for="lp">Mot de passe</label><input class="input" id="lp" type="password" autocomplete="current-password" required></div>
+      <button class="btn btn-primary" style="width:100%" id="lbtn">Se connecter</button>
+    </form>
+  </div>
+</section>
+
+<div id="app">
+  <div class="m-top"><span class="logo"><img id="mt-logo" alt=""></span><button type="button" id="logout-m">Se déconnecter</button></div>
+  <aside>
+    <span class="logo"><img id="ap-logo" alt=""></span>
+    <nav class="main" id="nav" aria-label="Sections"></nav>
+    <div class="bottom"><div id="who">Connecté</div><button type="button" id="logout">Se déconnecter</button></div>
+  </aside>
+  <main class="content" id="view" tabindex="-1"></main>
+</div>
+
+<div class="drawer-bg" id="dbg"></div>
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="d-title">
+  <header><div><h2 id="d-title"></h2><p id="d-sub"></p></div><button class="x" type="button" id="d-x" aria-label="Fermer">×</button></header>
+  <div class="body" id="d-body"></div>
+  <footer id="d-foot"></footer>
+</div>
+<div class="tip" id="tip"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>/*__LIB__*/</script>
+<script>/*__MS__*/</script>
+<script>
+const D = /*__DATA__*/null;
+const $ = s => document.querySelector(s);
+const esc = TW.esc, norm = TW.norm;
+const SHEETS = ['Parametres', 'Listes', 'Templates', 'Sessions', 'Inscriptions', 'Demandeurs', 'Contacts', 'MisesEnRelation'];
+let S = {}, P = TW.params([]), auth = null, route = 'dashboard', chartMode = 'avenir';
+const today = TW.todayParis();
+
+// ---------- Identité visuelle ----------
+function brand(p) {
+  document.documentElement.style.setProperty('--orange', p.couleur_principale);
+  document.documentElement.style.setProperty('--ink', p.couleur_encre);
+  for (const id of ['lg-logo', 'ap-logo', 'mt-logo']) { const i = document.getElementById(id); i.src = p.logo_url; i.alt = p.nom_asso; }
+  $('#lg-slogan').textContent = p.slogan;
+  document.title = 'Espace gestion – ' + p.nom_asso;
+}
+brand(Object.assign(TW.params([]), D.P || {}));
+
+// ---------- API ----------
+async function api(action, payload) {
+  $('#loading').style.display = 'block';
+  try {
+    const r = await fetch(D.api, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-TW-Auth': auth }, body: JSON.stringify(Object.assign({ action }, payload || {})) });
+    if (r.status === 401 || r.status === 403) { const e = new Error('auth'); e.auth = true; throw e; }
+    const res = await r.json().catch(() => ({ ok: false, message: 'Réponse illisible du serveur.' }));
+    if (!r.ok || res.ok === false) throw new Error(res.message || `Erreur ${r.status}`);
+    return res;
+  } finally { $('#loading').style.display = 'none'; }
+}
+async function load() {
+  const res = await api('load');
+  for (const s of SHEETS) S[s] = (res.data[s] || []).filter(r => r && Object.values(r).some(v => v !== '' && v !== null && v !== undefined));
+  P = TW.params(S.Parametres); brand(P);
+}
+async function save(sheet, row, msg) {
+  const res = await api('save', { sheet, row });
+  const i = S[sheet].findIndex(r => String(r.id) === String(res.row.id));
+  if (i >= 0) S[sheet][i] = Object.assign({}, S[sheet][i], res.row); else S[sheet].push(res.row);
+  if (sheet === 'Parametres') { P = TW.params(S.Parametres); brand(P); }
+  if (msg !== false) toast(msg || 'Modifications enregistrées');
+  return res.row;
+}
+async function remove(sheet, id, msg) {
+  await api('delete', { sheet, id });
+  S[sheet] = S[sheet].filter(r => String(r.id) !== String(id));
+  toast(msg || 'Supprimé');
+}
+function toast(msg, err) { const el = $('#toast'); el.textContent = msg; el.className = 'toast show' + (err ? ' err' : ''); clearTimeout(toast.t); toast.t = setTimeout(() => el.className = 'toast', 3800); }
+async function guard(fn) { try { return await fn(); } catch (e) { if (e.auth) { logout(); toast('Session expirée : reconnectez-vous.', true); } else toast(e.message || 'Une erreur est survenue.', true); throw e; } }
+
+// ---------- Connexion ----------
+$('#lf').addEventListener('submit', async e => {
+  e.preventDefault();
+  const u = $('#lu').value.trim(), p = $('#lp').value;
+  if (!u || !p) { lerr('Saisissez votre identifiant et votre mot de passe.'); return; }
+  auth = u + ':' + p;
+  $('#lbtn').disabled = true; $('#lbtn').textContent = 'Connexion…';
+  try { await load(); try { sessionStorage.setItem('tw-auth', auth); sessionStorage.setItem('tw-user', u); } catch (_) {} start(u); }
+  catch (err) { auth = null; lerr(err.auth ? 'Identifiant ou mot de passe incorrect.' : "Impossible de joindre le serveur. Vérifiez que le workflow « API gestionnaire » est actif."); }
+  finally { $('#lbtn').disabled = false; $('#lbtn').textContent = 'Se connecter'; }
+});
+function lerr(m) { const el = $('#lerr'); el.textContent = m; el.style.display = m ? 'block' : 'none'; }
+function start(u) { $('#login').style.display = 'none'; $('#app').classList.add('on'); $('#who').textContent = 'Connecté : ' + u; go(location.hash.slice(1) || 'dashboard'); }
+function logout() { auth = null; try { sessionStorage.removeItem('tw-auth'); } catch (_) {} $('#app').classList.remove('on'); $('#login').style.display = ''; closeDrawer(); }
+$('#logout').onclick = logout; $('#logout-m').onclick = logout;
+(async () => { let a = null, u = ''; try { a = sessionStorage.getItem('tw-auth'); u = sessionStorage.getItem('tw-user') || ''; } catch (_) {} if (a) { auth = a; try { await load(); start(u); } catch (e) { auth = null; } } })();
+
+// ---------- Navigation ----------
+const ICONS = {
+  dashboard: '<path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
+  demandes: '<circle cx="9" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M17 8h5M19.5 5.5v5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+  contacts: '<rect x="3" y="4" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="11" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5.5 17c.6-2 2-3 3.5-3s2.9 1 3.5 3M15 10h3M15 14h3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+  sessions: '<rect x="3" y="5" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+  emails: '<rect x="3" y="5" width="18" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="m4 7 8 6 8-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
+  parametres: '<circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'
+};
+const ROUTES = [['dashboard', 'Tableau de bord'], ['demandes', 'Demandes'], ['contacts', 'Contacts'], ['sessions', 'Formations et événements'], ['emails', 'Emails'], ['parametres', 'Paramètres']];
+const SHORT = { dashboard: 'Accueil', demandes: 'Demandes', contacts: 'Contacts', sessions: 'Agenda', emails: 'Emails', parametres: 'Réglages' };
+function renderNav() {
+  const todo = S.MisesEnRelation.filter(m => m.statut === 'À valider').length;
+  $('#nav').innerHTML = ROUTES.map(([k, l]) => `<a href="#${k}" data-r="${k}" ${route === k ? 'aria-current="page"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg><span class="lbl">${l}</span><span class="short" aria-hidden="true">${SHORT[k]}</span>${k === 'demandes' && todo ? `<span class="count" aria-label="${todo} à valider">${todo}</span>` : ''}</a>`).join('');
+}
+window.addEventListener('hashchange', () => auth && go(location.hash.slice(1)));
+function go(r) { $('#tip').style.display = 'none'; route = ROUTES.some(x => x[0] === r) ? r : 'dashboard'; renderNav(); VIEWS[route](); $('#view').focus({ preventScroll: true }); window.scrollTo(0, 0); }
+const refresh = () => { renderNav(); VIEWS[route](); };
+
+// ---------- Utilitaires d'affichage ----------
+const listes = type => S.Listes.filter(l => norm(l.type) === type).sort((a, b) => (+a.ordre || 0) - (+b.ordre || 0));
+const lib = (type, codes) => TW.libelles(S.Listes, type, codes, 'fr');
+const fdate = (v, o) => { const iso = TW.isoDate(v); if (!iso) return ''; return new Intl.DateTimeFormat('fr-FR', Object.assign({ day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }, o)).format(new Date(iso + 'T12:00:00Z')); };
+const fullName = r => `${r.prenom || ''} ${r.nom || ''}`.trim();
+const BADGE = {
+  'Nouveau': 'b-new', 'Proposé': 'b-warn', 'À traiter manuellement': 'b-err', 'Mis en relation': 'b-ok', 'En emploi': 'b-ok', 'Archivé': 'b-off',
+  'À valider': 'b-new', 'En attente du contact': 'b-warn', 'Envoyée': 'b-ok', 'Refusée': 'b-off', 'Refusée par le contact': 'b-err',
+  'Inscrit': 'b-warn', 'Confirmé': 'b-ok', 'Annulé': 'b-off', 'Présent': 'b-ok', 'Absent': 'b-err'
+};
+const badge = s => `<span class="badge ${BADGE[s] || ''}">${esc(s || '—')}</span>`;
+const sessionStats = s => {
+  const ins = S.Inscriptions.filter(i => String(i.session_id) === String(s.id));
+  const c = ins.filter(i => ['Confirmé', 'Présent'].includes(i.statut)).length;
+  const a = ins.filter(i => !i.statut || i.statut === 'Inscrit').length;
+  const x = ins.filter(i => ['Annulé', 'Absent'].includes(i.statut)).length;
+  return { ins, c, a, x, actifs: c + a, places: +s.places || 0 };
+};
+const stitle = s => s.titre || s.titre_en || s.id;
+const yes = v => norm(v) === 'oui';
+
+// ---------- Tiroir & formulaires ----------
+let drawerState = null;
+function openDrawer({ title, sub, body, foot, onOpen }) {
+  $('#d-title').textContent = title; $('#d-sub').textContent = sub || '';
+  $('#d-body').innerHTML = body; $('#d-foot').innerHTML = foot || '';
+  $('#d-foot').style.display = foot ? '' : 'none';
+  $('#drawer').classList.add('open'); $('#dbg').classList.add('open');
+  drawerState = { last: document.activeElement }; onOpen && onOpen();
+  setTimeout(() => { const f = $('#d-body').querySelector('input:not([type=hidden]),select,textarea,button'); (f || $('#d-x')).focus(); }, 60);
+}
+function closeDrawer() { $('#drawer').classList.remove('open'); $('#dbg').classList.remove('open'); if (drawerState && drawerState.last) drawerState.last.focus && drawerState.last.focus(); drawerState = null; }
+$('#d-x').onclick = closeDrawer; $('#dbg').onclick = closeDrawer;
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && drawerState && !document.querySelector('.ms[aria-expanded=true]')) closeDrawer(); });
+
+// Champs : {k, label, type, options, hint, req, full}
+function fieldsHtml(fields, row) {
+  const v = k => row[k] ?? '';
+  return '<div class="grid-2">' + fields.map(f => {
+    const id = 'fx-' + f.k, span = f.full || ['textarea', 'multi', 'toggle'].includes(f.type) ? ' style="grid-column:1/-1"' : '';
+    const lab = `<label for="${id}">${esc(f.label)}${f.req ? ' <span class="req">*</span>' : ''}</label>${f.hint ? `<span class="hint">${esc(f.hint)}</span>` : ''}`;
+    let input;
+    if (f.type === 'textarea') input = `<textarea class="textarea" id="${id}" name="${f.k}">${esc(v(f.k))}</textarea>`;
+    else if (f.type === 'select') input = `<select class="select" id="${id}" name="${f.k}">${f.options.map(o => { const [val, l] = Array.isArray(o) ? o : [o, o]; return `<option value="${esc(val)}" ${String(v(f.k)) === String(val) ? 'selected' : ''}>${esc(l)}</option>`; }).join('')}</select>`;
+    else if (f.type === 'multi') return `<div class="field" data-multi="${f.k}"${span}><span class="label" id="${id}-l">${esc(f.label)}${f.req ? ' <span class="req">*</span>' : ''}</span>${f.hint ? `<span class="hint">${esc(f.hint)}</span>` : ''}<div id="${id}"></div><span class="err-msg">Choisissez au moins une option.</span></div>`;
+    else if (f.type === 'toggle') return `<div class="field"${span}><label class="switch"><input type="checkbox" role="switch" name="${f.k}" ${yes(v(f.k)) ? 'checked' : ''}><span><b>${esc(f.label)}</b><span>${esc(f.hint || '')}</span></span></label></div>`;
+    else if (f.type === 'color') input = `<div class="color-in"><input type="color" value="${esc(v(f.k) || '#F26716')}" data-mirror="${id}" aria-label="${esc(f.label)} (sélecteur)"><input class="input" id="${id}" name="${f.k}" value="${esc(v(f.k))}" maxlength="7"></div>`;
+    else input = `<input class="input" id="${id}" name="${f.k}" type="${f.type || 'text'}" value="${esc(f.type === 'date' ? TW.isoDate(v(f.k)) : v(f.k))}" ${f.min !== undefined ? `min="${f.min}"` : ''}>`;
+    return `<div class="field"${span}>${lab}${input}<span class="err-msg">${f.type === 'email' ? 'Adresse email invalide.' : 'Ce champ est obligatoire.'}</span></div>`;
+  }).join('') + '</div>';
+}
+function mountMulti(fields, row, scope) {
+  const ms = {};
+  for (const f of fields.filter(f => f.type === 'multi')) {
+    const el = scope.querySelector('#fx-' + f.k);
+    ms[f.k] = MultiSelect(el, { labelledby: 'fx-' + f.k + '-l', options: f.options(), placeholder: 'Choisir…', search: 'Rechercher…', empty: 'Aucun résultat', remove: 'Retirer' });
+    ms[f.k].set(TW.list(row[f.k]));
+  }
+  scope.querySelectorAll('[data-mirror]').forEach(c => { const t = scope.querySelector('#' + c.dataset.mirror); c.oninput = () => t.value = c.value.toUpperCase(); t.oninput = () => { if (/^#[0-9a-f]{6}$/i.test(t.value)) c.value = t.value; }; });
+  return ms;
+}
+function readFields(fields, scope, ms) {
+  const out = {}; let ok = true, first = null;
+  for (const f of fields) {
+    let val;
+    if (f.type === 'multi') val = ms[f.k].get().join(',');
+    else if (f.type === 'toggle') val = scope.querySelector(`[name="${f.k}"]`).checked ? 'Oui' : 'Non';
+    else val = scope.querySelector(`[name="${f.k}"]`).value.trim();
+    if (f.type === 'number' && val !== '') val = Number(val);
+    out[f.k] = val;
+    const bad = (f.req && (val === '' || val === null)) || (f.type === 'email' && val && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val));
+    const fe = f.type === 'multi' ? scope.querySelector(`[data-multi="${f.k}"]`) : scope.querySelector(`[name="${f.k}"]`)?.closest('.field');
+    fe && fe.classList.toggle('invalid', !!bad);
+    if (bad) { ok = false; first = first || fe; }
+  }
+  if (!ok) { first.querySelector('input,select,textarea,.ms-trigger')?.focus(); toast('Quelques champs sont à compléter.', true); }
+  return ok ? out : null;
+}
+function formDrawer({ title, sub, fields, row, sheet, onSaved, extraFoot, del, delMsg, saveLabel }) {
+  openDrawer({ title, sub, body: `<form id="dform" novalidate>${fieldsHtml(fields, row)}</form>`,
+    foot: `${del ? '<button class="btn btn-danger" type="button" id="d-del">Supprimer</button>' : ''}${extraFoot || ''}<div class="r"><button class="btn btn-ghost" type="button" id="d-cancel">Annuler</button><button class="btn btn-primary" type="button" id="d-save">${saveLabel || 'Enregistrer'}</button></div>`,
+    onOpen: () => {
+      const scope = $('#d-body'), ms = mountMulti(fields, row, scope);
+      $('#d-cancel').onclick = closeDrawer;
+      const doSave = async () => { const vals = readFields(fields, scope, ms); if (!vals) return; $('#d-save').disabled = true;
+        try { const saved = await guard(() => save(sheet, Object.assign({}, row, vals))); closeDrawer(); onSaved && onSaved(saved); refresh(); } catch (_) { $('#d-save').disabled = false; } };
+      $('#d-save').onclick = doSave; $('#dform').onsubmit = e => { e.preventDefault(); doSave(); };
+      if (del) $('#d-del').onclick = async () => { if (!confirm(delMsg || 'Supprimer définitivement cet élément ?')) return; try { await guard(() => remove(sheet, row.id)); closeDrawer(); refresh(); } catch (_) {} };
+    } });
+}
+
+// =====================================================================
+const VIEWS = {};
+
+// ---------- Tableau de bord ----------
+VIEWS.dashboard = () => {
+  const dem = S.Demandeurs, mer = S.MisesEnRelation;
+  const enCours = dem.filter(d => ['Nouveau', 'Proposé', 'À traiter manuellement'].includes(d.statut)).length;
+  const month = today.slice(0, 7);
+  const envoyees = mer.filter(m => m.statut === 'Envoyée'), envMois = envoyees.filter(m => String(m.date_decision || m.date).slice(0, 7) === month).length;
+  const futures = S.Sessions.filter(s => TW.isoDate(s.date) >= today);
+  let insFut = 0, conf = 0, att = 0;
+  for (const s of futures) { const st = sessionStats(s); insFut += st.actifs; conf += st.c; att += st.a; }
+  const taux = insFut ? Math.round(100 * conf / insFut) : null;
+  const aValider = mer.filter(m => m.statut === 'À valider');
+  const manuels = dem.filter(d => d.statut === 'À traiter manuellement');
+  $('#view').innerHTML = `
+  <div class="head"><div><h1>Tableau de bord</h1><p>${esc(new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date()))}</p></div>
+    <div class="tools"><button class="btn btn-ghost btn-sm" id="reload" type="button">Actualiser les données</button></div></div>
+  <div class="kpis">
+    <div class="kpi"><b>${enCours}</b><span>Demandes en cours</span><small>${aValider.length} proposition${aValider.length > 1 ? 's' : ''} à valider</small></div>
+    <div class="kpi"><b>${envoyees.length}</b><span>Mises en relation</span><small>dont ${envMois} ce mois-ci</small></div>
+    <div class="kpi"><b>${insFut}</b><span>Inscriptions à venir</span><small>sur ${futures.length} session${futures.length > 1 ? 's' : ''} programmée${futures.length > 1 ? 's' : ''}</small></div>
+    <div class="kpi"><b>${taux === null ? '–' : taux + ' %'}</b><span>Présences confirmées</span><small>${conf} confirmée${conf > 1 ? 's' : ''}, ${att} sans réponse</small></div>
+  </div>
+  <div class="panel">
+    <div class="head" style="margin-bottom:10px"><div><h2>Inscriptions par formation et événement</h2><p class="sub" style="margin:0">Le trait vertical marque le nombre de places.</p></div>
+      <div class="tools"><div class="seg-toggle" role="group" aria-label="Période">${[['avenir', 'À venir'], ['passees', 'Passées'], ['toutes', 'Toutes']].map(([k, l]) => `<button type="button" data-cm="${k}" aria-pressed="${chartMode === k}">${l}</button>`).join('')}</div>
+      <button class="btn btn-ghost btn-sm" type="button" id="tbl-toggle" aria-pressed="false">Voir en tableau</button></div></div>
+    <div class="legend"><span><i class="sw-c"></i>Présence confirmée</span><span><i class="sw-a"></i>Inscrit, sans réponse</span><span><i class="sw-x"></i>Annulé ou absent</span></div>
+    <div id="chart"></div>
+  </div>
+  <div class="cols">
+    <div class="panel"><h2>À traiter</h2><p class="sub">Propositions de mise en relation en attente de votre décision.</p>
+      ${aValider.length ? `<ul class="todo">${aValider.slice(0, 8).map(m => `<li><div class="who"><b>${esc(m.demandeur_nom)} → ${esc(m.contact_nom)}</b><span>Score ${esc(m.score)} · ${esc(m.raisons)}</span></div><div class="acts"><button class="btn btn-primary btn-sm" data-mer="${esc(m.token)}" data-a="valider">Valider</button><button class="btn btn-ghost btn-sm" data-mer="${esc(m.token)}" data-a="refuser">Refuser</button></div></li>`).join('')}</ul>${aValider.length > 8 ? `<p><a href="#demandes">Voir les ${aValider.length} propositions</a></p>` : ''}` : '<p class="sub" style="margin:0">Rien à valider pour le moment.</p>'}
+      ${manuels.length ? `<h3 style="font-size:17px;margin:18px 0 8px">Sans contact trouvé (${manuels.length})</h3><ul class="todo">${manuels.slice(0, 5).map(d => `<li><div class="who"><b>${esc(fullName(d))}</b><span>${esc(lib('metier', d.metiers))}</span></div><button class="btn btn-ghost btn-sm" data-dem="${esc(d.id)}">Ouvrir</button></li>`).join('')}</ul>` : ''}
+    </div>
+    <div class="panel"><h2>Avancement des demandes</h2><p class="sub">Toutes les demandes reçues, par étape.</p>
+      <div class="pipe">${['Nouveau', 'Proposé', 'Mis en relation', 'En emploi'].map(st => `<div class="step ${st === 'Nouveau' ? 'hot' : st === 'En emploi' ? 'good' : ''}"><b>${dem.filter(d => d.statut === st).length}</b><span>${st}</span></div>`).join('')}</div>
+      <div class="side-stats"><span><b>${manuels.length}</b> à traiter manuellement</span><span><b>${dem.filter(d => d.statut === 'Archivé').length}</b> archivées</span></div>
+      <h3 style="font-size:17px;margin:22px 0 10px">Mises en relation</h3>
+      <div class="pipe">${['À valider', 'En attente du contact', 'Envoyée'].map(st => `<div class="step ${st === 'Envoyée' ? 'good' : ''}"><b>${mer.filter(m => m.statut === st).length}</b><span>${st}</span></div>`).join('')}</div>
+      <div class="side-stats"><span><b>${mer.filter(m => m.statut === 'Refusée').length}</b> refusées par vous</span><span><b>${mer.filter(m => m.statut === 'Refusée par le contact').length}</b> refusées par le contact</span></div>
+    </div>
+  </div>`;
+  drawChart(false);
+  $('#reload').onclick = () => guard(load).then(() => { refresh(); toast('Données actualisées'); });
+  document.querySelectorAll('[data-cm]').forEach(b => b.onclick = () => { chartMode = b.dataset.cm; document.querySelectorAll('[data-cm]').forEach(x => x.setAttribute('aria-pressed', x === b)); drawChart($('#tbl-toggle').getAttribute('aria-pressed') === 'true'); });
+  $('#tbl-toggle').onclick = e => { const on = e.currentTarget.getAttribute('aria-pressed') !== 'true'; e.currentTarget.setAttribute('aria-pressed', on); e.currentTarget.textContent = on ? 'Voir le graphique' : 'Voir en tableau'; drawChart(on); };
+  bindMerButtons($('#view')); document.querySelectorAll('[data-dem]').forEach(b => b.onclick = () => openDemande(S.Demandeurs.find(d => d.id === b.dataset.dem)));
+};
+function drawChart(asTable) {
+  $('#tip').style.display = 'none';
+  let ss = S.Sessions.map(s => Object.assign({ iso: TW.isoDate(s.date) }, s));
+  if (chartMode === 'avenir') ss = ss.filter(s => s.iso >= today).sort((a, b) => a.iso.localeCompare(b.iso));
+  else if (chartMode === 'passees') ss = ss.filter(s => s.iso < today).sort((a, b) => b.iso.localeCompare(a.iso)).slice(0, 12);
+  else ss = ss.sort((a, b) => b.iso.localeCompare(a.iso)).slice(0, 20);
+  const el = $('#chart');
+  if (!ss.length) { el.innerHTML = `<p class="sub">Aucune session ${chartMode === 'avenir' ? 'programmée' : chartMode === 'passees' ? 'passée' : ''}. <a href="#sessions">Créer une formation ou un événement</a></p>`; return; }
+  const rows = ss.map(s => Object.assign({ s }, sessionStats(s)));
+  if (asTable) {
+    el.innerHTML = `<div class="tscroll"><table class="t"><thead><tr><th>Session</th><th>Date</th><th class="num">Confirmés</th><th class="num">Sans réponse</th><th class="num">Annulés / absents</th><th class="num">Places</th></tr></thead><tbody>${rows.map(r => `<tr><td data-l="Session">${esc(stitle(r.s))}</td><td data-l="Date">${fdate(r.s.date)}</td><td class="num" data-l="Confirmés">${r.c}</td><td class="num" data-l="Sans réponse">${r.a}</td><td class="num" data-l="Annulés">${r.x}</td><td class="num" data-l="Places">${r.places || '–'}</td></tr>`).join('')}</tbody></table></div>`;
+    return;
+  }
+  const max = Math.max(1, ...rows.map(r => Math.max(r.c + r.a + r.x, r.places)));
+  const step = max <= 10 ? 2 : max <= 25 ? 5 : max <= 60 ? 10 : 20, top = Math.ceil(max / step) * step;
+  const pct = n => (100 * n / top);
+  el.innerHTML = `<div class="bars">${rows.map((r, i) => `<div class="bar-row"><div class="bar-label"><b>${esc(stitle(r.s))}</b><span>${esc(r.s.type || '')} · ${fdate(r.s.date, { year: undefined })}</span></div>
+    <div class="bar-track"><div class="bar-fill" style="width:calc(${pct(r.c + r.a + r.x)}% + ${[r.c, r.a, r.x].filter(Boolean).length > 1 ? ([r.c, r.a, r.x].filter(Boolean).length - 1) * 2 : 0}px)">
+      ${r.c ? `<div class="seg c" style="flex:${r.c}" data-tip="${i}|c"></div>` : ''}${r.a ? `<div class="seg a" style="flex:${r.a}" data-tip="${i}|a"></div>` : ''}${r.x ? `<div class="seg x" style="flex:${r.x}" data-tip="${i}|x"></div>` : ''}</div>
+      ${r.places ? `<div class="cap" style="left:${pct(r.places)}%" data-tip="${i}|p"></div>` : ''}
+      <span class="bar-val" style="left:calc(${pct(Math.max(r.c + r.a + r.x, r.places))}% + ${r.c + r.a + r.x ? 10 : 0}px)">${r.actifs}${r.places ? ' / ' + r.places : ''}</span></div></div>`).join('')}</div>
+    <div class="axis"><div></div><div class="ticks">${Array.from({ length: top / step + 1 }, (_, k) => `<span style="left:${pct(k * step)}%">${k * step}</span>`).join('')}</div></div>`;
+  const tip = $('#tip');
+  el.querySelectorAll('[data-tip]').forEach(seg => {
+    seg.addEventListener('mousemove', e => {
+      const [i, k] = seg.dataset.tip.split('|'), r = rows[+i];
+      const label = { c: ['Présence confirmée', r.c], a: ['Inscrit, sans réponse', r.a], x: ['Annulé ou absent', r.x], p: ['Places', r.places] }[k];
+      tip.innerHTML = `<b>${esc(stitle(r.s))}</b><br>${label[0]} : ${label[1]}<br><span style="opacity:.8">${r.actifs} inscrit${r.actifs > 1 ? 's' : ''} actif${r.actifs > 1 ? 's' : ''}${r.places ? ' sur ' + r.places + ' places' : ''}</span>`;
+      tip.style.display = 'block'; tip.style.left = Math.min(e.clientX + 14, innerWidth - 270) + 'px'; tip.style.top = (e.clientY + 14) + 'px';
+    });
+    seg.addEventListener('mouseleave', () => tip.style.display = 'none');
+  });
+}
+function bindMerButtons(scope) {
+  scope.querySelectorAll('[data-mer]').forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    try {
+      const r = await fetch(`${D.mer}?t=${encodeURIComponent(b.dataset.mer)}&a=${b.dataset.a}&format=json`);
+      const res = await r.json();
+      toast(res.message || (res.ok ? 'Enregistré' : 'Action impossible'), !res.ok);
+      await guard(load); closeDrawer(); refresh();
+    } catch (e) { toast("L'action n'a pas abouti. Vérifiez que le workflow « Décisions » est actif.", true); b.disabled = false; }
+  });
+}
+
+// ---------- Demandes ----------
+let demFilter = { q: '', statut: 'actives' };
+VIEWS.demandes = () => {
+  const statuts = ['Nouveau', 'Proposé', 'À traiter manuellement', 'Mis en relation', 'En emploi', 'Archivé'];
+  $('#view').innerHTML = `<div class="head"><div><h1>Demandes de mise en relation</h1><p>Reçues via le formulaire public. Cliquez sur une ligne pour la traiter.</p></div><div class="tools"><a class="btn btn-ghost btn-sm" href="${esc(D.demande)}" target="_blank" rel="noopener">Ouvrir le formulaire public</a></div></div>
+    <div class="toolbar"><input class="input" type="search" id="dq" placeholder="Rechercher un nom, un email, un métier…" aria-label="Rechercher" value="${esc(demFilter.q)}">
+    <select class="select" id="ds" aria-label="Filtrer par statut"><option value="actives">Demandes en cours</option><option value="">Tous les statuts</option>${statuts.map(s => `<option ${demFilter.statut === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div><div id="dlist"></div>`;
+  $('#ds').value = demFilter.statut;
+  const draw = () => {
+    const q = norm(demFilter.q);
+    let rows = S.Demandeurs.slice().sort((a, b) => String(TW.isoDate(b.date_demande)).localeCompare(TW.isoDate(a.date_demande)));
+    if (demFilter.statut === 'actives') rows = rows.filter(d => ['Nouveau', 'Proposé', 'À traiter manuellement'].includes(d.statut));
+    else if (demFilter.statut) rows = rows.filter(d => d.statut === demFilter.statut);
+    if (q) rows = rows.filter(d => norm([fullName(d), d.email, d.ville, lib('metier', d.metiers), lib('langue', d.langues)].join(' ')).includes(q));
+    $('#dlist').innerHTML = rows.length ? `<div class="tscroll"><table class="t"><thead><tr><th>Demandeur</th><th>Métiers recherchés</th><th>Langues</th><th>Reçue le</th><th>Statut</th><th class="num">Propositions</th></tr></thead><tbody>${rows.map(d => {
+      const props = S.MisesEnRelation.filter(m => m.demandeur_id === d.id);
+      return `<tr class="click" data-id="${esc(d.id)}" tabindex="0"><td data-l="Demandeur"><b>${esc(fullName(d))}</b><div class="muted">${esc(d.email)}${d.ville ? ' · ' + esc(d.ville) : ''}</div></td><td data-l="Métiers">${esc(lib('metier', d.metiers))}</td><td data-l="Langues">${esc(lib('langue', d.langues))}</td><td data-l="Reçue le">${fdate(d.date_demande)}</td><td data-l="Statut">${badge(d.statut)}</td><td class="num" data-l="Propositions">${props.length ? `${props.filter(m => m.statut === 'Envoyée').length} envoyée${props.filter(m => m.statut === 'Envoyée').length > 1 ? 's' : ''} / ${props.length}` : '–'}</td></tr>`; }).join('')}</tbody></table></div>`
+      : `<div class="empty">${S.Demandeurs.length ? 'Aucune demande ne correspond à ces filtres.' : 'Aucune demande pour le moment. Partagez le lien du formulaire public pour en recevoir.'}</div>`;
+    $('#dlist').querySelectorAll('tr[data-id]').forEach(tr => { const open = () => openDemande(S.Demandeurs.find(d => d.id === tr.dataset.id)); tr.onclick = open; tr.onkeydown = e => { if (e.key === 'Enter') open(); }; });
+  };
+  $('#dq').oninput = e => { demFilter.q = e.target.value; draw(); };
+  $('#ds').onchange = e => { demFilter.statut = e.target.value; draw(); };
+  draw();
+};
+function openDemande(d) {
+  if (!d) return;
+  const props = S.MisesEnRelation.filter(m => m.demandeur_id === d.id).sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  const statuts = ['Nouveau', 'Proposé', 'À traiter manuellement', 'Mis en relation', 'En emploi', 'Archivé'];
+  openDrawer({ title: fullName(d), sub: `Demande reçue le ${fdate(d.date_demande)}`,
+    body: `<dl class="dl"><dt>Email</dt><dd><a href="mailto:${esc(d.email)}">${esc(d.email)}</a></dd>${d.telephone ? `<dt>Téléphone</dt><dd>${esc(d.telephone)}</dd>` : ''}${d.ville ? `<dt>Ville</dt><dd>${esc(d.ville)}</dd>` : ''}
+      <dt>Langues</dt><dd>${esc(lib('langue', d.langues))}</dd><dt>Métiers</dt><dd>${esc(lib('metier', d.metiers))}</dd>${d.parcours ? `<dt>Parcours</dt><dd>${esc(d.parcours)}</dd>` : ''}</dl>
+      <div class="grid-2"><div class="field"><label for="dm-st">Statut</label><select class="select" id="dm-st">${statuts.map(s => `<option ${d.statut === s ? 'selected' : ''}>${s}</option>`).join('')}</select><span class="hint">Remettre sur « Nouveau » relance la recherche de contacts à la prochaine heure.</span></div></div>
+      <div class="field"><label for="dm-notes">Notes internes</label><textarea class="textarea" id="dm-notes">${esc(d.notes)}</textarea></div>
+      <h3 style="font-size:19px;margin:8px 0 12px">Propositions de contacts</h3>
+      ${props.length ? `<ul class="props">${props.map(m => { const c = S.Contacts.find(x => x.id === m.contact_id) || {}; return `<li><div class="top"><b>${esc(m.contact_nom)}${c.entreprise ? ` <span class="muted" style="font-weight:400">· ${esc(c.entreprise)}</span>` : ''}</b>${badge(m.statut)}</div>
+        <div class="why">Score ${esc(m.score)} · ${esc(m.raisons)}${c.id ? ` · ${yes(c.accord_partage) ? 'partage libre' : 'accord à demander'}` : ''}</div>${m.historique ? `<div class="why">${esc(String(m.historique).split('\n').slice(-1)[0])}</div>` : ''}
+        ${m.statut === 'À valider' ? `<div class="acts"><button class="btn btn-primary btn-sm" data-mer="${esc(m.token)}" data-a="valider">Valider</button><button class="btn btn-ghost btn-sm" data-mer="${esc(m.token)}" data-a="refuser">Refuser</button></div>` : ''}</li>`; }).join('')}</ul>`
+        : `<p class="sub">${d.statut === 'Nouveau' ? 'La recherche automatique tourne toutes les heures.' : 'Aucune proposition enregistrée.'}</p>`}`,
+    foot: `<button class="btn btn-danger" type="button" id="dm-del">Supprimer</button><div class="r"><button class="btn btn-ghost" type="button" id="dm-c">Fermer</button><button class="btn btn-primary" type="button" id="dm-s">Enregistrer</button></div>`,
+    onOpen: () => {
+      bindMerButtons($('#d-body'));
+      $('#dm-c').onclick = closeDrawer;
+      $('#dm-s').onclick = async () => { try { await guard(() => save('Demandeurs', Object.assign({}, d, { statut: $('#dm-st').value, notes: $('#dm-notes').value }))); closeDrawer(); refresh(); } catch (_) {} };
+      $('#dm-del').onclick = async () => { if (!confirm(`Supprimer la demande de ${fullName(d)} ? Ses données personnelles seront effacées.`)) return; try { await guard(() => remove('Demandeurs', d.id, 'Demande supprimée')); closeDrawer(); refresh(); } catch (_) {} };
+    } });
+}
+
+// ---------- Contacts ----------
+let contactQ = '';
+const CONTACT_FIELDS = () => [
+  { k: 'prenom', label: 'Prénom', req: true }, { k: 'nom', label: 'Nom', req: true },
+  { k: 'email', label: 'Email', type: 'email', req: true }, { k: 'telephone', label: 'Téléphone', type: 'tel' },
+  { k: 'entreprise', label: 'Entreprise ou structure' }, { k: 'poste', label: 'Poste' },
+  { k: 'ville', label: 'Ville' }, { k: 'langue_contact', label: 'Langue des emails envoyés au contact', type: 'select', options: [['fr', 'Français'], ['en', 'Anglais']] },
+  { k: 'metiers', label: 'Métiers sur lesquels il ou elle peut aider', type: 'multi', req: true, hint: 'Utilisés pour trouver les demandes correspondantes.', options: () => listes('metier').map(m => ({ value: m.code, label: m.libelle_fr, group: String(m.groupe || '').split('|')[0].trim() })) },
+  { k: 'langues', label: 'Langues parlées', type: 'multi', options: () => listes('langue').map(l => ({ value: l.code, label: l.libelle_fr, natif: l.libelle_natif })) },
+  { k: 'accord_partage', label: 'Accord pour partager ses coordonnées sans le consulter', type: 'toggle', hint: 'Désactivé : à chaque mise en relation validée, le contact reçoit un email pour accepter ou refuser avant que ses coordonnées soient transmises.' },
+  { k: 'disponible', label: 'Disponible pour de nouvelles mises en relation', type: 'toggle', hint: 'Désactivez pour mettre ce contact en pause.' },
+  { k: 'notes', label: 'Notes internes', type: 'textarea' }
+];
+VIEWS.contacts = () => {
+  $('#view').innerHTML = `<div class="head"><div><h1>Contacts de l'association</h1><p>Les personnes de votre réseau qui acceptent d'aider les demandeurs.</p></div><div class="tools"><button class="btn btn-primary" id="c-add" type="button">Ajouter un contact</button></div></div>
+    <div class="toolbar"><input class="input" type="search" id="cq" placeholder="Rechercher un nom, une entreprise, un métier…" aria-label="Rechercher" value="${esc(contactQ)}"></div><div id="clist"></div>`;
+  const draw = () => {
+    const q = norm(contactQ);
+    const rows = S.Contacts.filter(c => !q || norm([fullName(c), c.email, c.entreprise, c.poste, c.ville, lib('metier', c.metiers)].join(' ')).includes(q)).sort((a, b) => fullName(a).localeCompare(fullName(b)));
+    $('#clist').innerHTML = rows.length ? `<div class="tscroll"><table class="t"><thead><tr><th>Contact</th><th>Métiers</th><th>Langues</th><th>Partage des coordonnées</th><th>Disponible</th><th class="num">Mises en relation</th></tr></thead><tbody>${rows.map(c => `<tr class="click" tabindex="0" data-id="${esc(c.id)}"><td data-l="Contact"><b>${esc(fullName(c))}</b><div class="muted">${esc([c.poste, c.entreprise].filter(Boolean).join(' · '))}</div></td><td data-l="Métiers">${esc(lib('metier', c.metiers))}</td><td data-l="Langues">${esc(lib('langue', c.langues))}</td><td data-l="Partage">${yes(c.accord_partage) ? '<span class="badge b-ok">Accord donné</span>' : '<span class="badge b-warn">Accord à demander</span>'}</td><td data-l="Disponible">${yes(c.disponible) ? 'Oui' : '<span class="muted">En pause</span>'}</td><td class="num" data-l="Mises en relation">${+c.nb_mises_en_relation || 0}</td></tr>`).join('')}</tbody></table></div>`
+      : `<div class="empty">${S.Contacts.length ? 'Aucun contact ne correspond.' : 'Aucun contact pour le moment. Ajoutez les membres de votre réseau qui peuvent aider.'}</div>`;
+    $('#clist').querySelectorAll('tr[data-id]').forEach(tr => { const open = () => editContact(S.Contacts.find(c => c.id === tr.dataset.id)); tr.onclick = open; tr.onkeydown = e => { if (e.key === 'Enter') open(); }; });
+  };
+  $('#cq').oninput = e => { contactQ = e.target.value; draw(); };
+  $('#c-add').onclick = () => editContact(null);
+  draw();
+};
+function editContact(c) {
+  const row = c || { langue_contact: 'fr', accord_partage: 'Non', disponible: 'Oui', nb_mises_en_relation: 0 };
+  formDrawer({ title: c ? fullName(c) : 'Nouveau contact', sub: c ? `${+c.nb_mises_en_relation || 0} mise(s) en relation` : '', fields: CONTACT_FIELDS(), row, sheet: 'Contacts', del: !!c, delMsg: `Supprimer ${c ? fullName(c) : ''} de vos contacts ?` });
+}
+
+// ---------- Formations et événements ----------
+let sessFilter = 'avenir';
+const SESSION_FIELDS = [
+  { k: 'type', label: 'Type', type: 'select', options: ['Formation', 'Événement'] }, { k: 'places', label: 'Nombre de places', type: 'number', hint: '0 = sans limite', min: 0 },
+  { k: 'titre', label: 'Titre (français)', req: true, full: true }, { k: 'titre_en', label: 'Titre (anglais)', full: true },
+  { k: 'date', label: 'Date', type: 'date', req: true }, { k: 'intervenant', label: 'Animé par' },
+  { k: 'heure_debut', label: 'Heure de début', type: 'time' }, { k: 'heure_fin', label: 'Heure de fin', type: 'time' },
+  { k: 'lieu', label: 'Lieu', full: true, hint: 'Adresse, ou « En ligne ».' }, { k: 'lien_visio', label: 'Lien de visioconférence', type: 'url', full: true },
+  { k: 'description', label: 'Description (français)', type: 'textarea' }, { k: 'description_en', label: 'Description (anglais)', type: 'textarea' },
+  { k: 'infos_pratiques', label: 'Infos pratiques (dans les emails)', type: 'textarea' },
+  { k: 'publie', label: "Publié dans l'agenda public", type: 'toggle', hint: 'Désactivé : la session reste en brouillon, personne ne peut s’inscrire.' }
+];
+VIEWS.sessions = () => {
+  $('#view').innerHTML = `<div class="head"><div><h1>Formations et événements</h1><p>Créez les sessions, suivez les inscriptions et les confirmations de présence.</p></div><div class="tools"><a class="btn btn-ghost btn-sm" href="${esc(D.agenda)}" target="_blank" rel="noopener">Voir l'agenda public</a><button class="btn btn-primary" id="s-add" type="button">Nouvelle session</button></div></div>
+    <div class="toolbar"><div class="seg-toggle" role="group" aria-label="Période">${[['avenir', 'À venir'], ['passees', 'Passées'], ['toutes', 'Toutes']].map(([k, l]) => `<button type="button" data-sf="${k}" aria-pressed="${sessFilter === k}">${l}</button>`).join('')}</div></div><div id="slist"></div>`;
+  const draw = () => {
+    let rows = S.Sessions.map(s => Object.assign({ iso: TW.isoDate(s.date) }, s));
+    if (sessFilter === 'avenir') rows = rows.filter(s => s.iso >= today).sort((a, b) => a.iso.localeCompare(b.iso));
+    else if (sessFilter === 'passees') rows = rows.filter(s => s.iso < today).sort((a, b) => b.iso.localeCompare(a.iso));
+    else rows.sort((a, b) => b.iso.localeCompare(a.iso));
+    $('#slist').innerHTML = rows.length ? `<div class="tscroll"><table class="t"><thead><tr><th>Date</th><th>Session</th><th>Inscriptions</th><th>Confirmées</th><th>Agenda</th></tr></thead><tbody>${rows.map(s => { const st = sessionStats(s); return `<tr class="click" tabindex="0" data-id="${esc(s.id)}"><td data-l="Date"><b>${fdate(s.date)}</b><div class="muted">${esc([s.heure_debut, s.heure_fin].filter(Boolean).join(' – '))}</div></td><td data-l="Session"><b>${esc(stitle(s))}</b><div class="muted">${esc(s.type || '')}${s.lieu ? ' · ' + esc(s.lieu) : ''}</div></td>
+      <td data-l="Inscriptions"><div class="mini-meter">${st.places ? `<i aria-hidden="true"><b style="width:${Math.min(100, 100 * st.actifs / st.places)}%"></b></i>` : ''}<span>${st.actifs}${st.places ? ' / ' + st.places : ''}</span></div></td><td data-l="Confirmées">${st.c}${st.x ? `<div class="muted">${st.x} annulée${st.x > 1 ? 's' : ''}</div>` : ''}</td><td data-l="Agenda">${yes(s.publie) ? '<span class="badge b-ok">Publié</span>' : '<span class="badge b-off">Brouillon</span>'}</td></tr>`; }).join('')}</tbody></table></div>`
+      : `<div class="empty">${sessFilter === 'avenir' ? 'Aucune session à venir. Créez votre prochaine formation ou votre prochain événement.' : 'Aucune session.'}</div>`;
+    $('#slist').querySelectorAll('tr[data-id]').forEach(tr => { const open = () => openSession(S.Sessions.find(s => s.id === tr.dataset.id)); tr.onclick = open; tr.onkeydown = e => { if (e.key === 'Enter') open(); }; });
+  };
+  document.querySelectorAll('[data-sf]').forEach(b => b.onclick = () => { sessFilter = b.dataset.sf; document.querySelectorAll('[data-sf]').forEach(x => x.setAttribute('aria-pressed', x === b)); draw(); });
+  $('#s-add').onclick = () => formDrawer({ title: 'Nouvelle session', fields: SESSION_FIELDS, row: { type: 'Formation', publie: 'Oui', places: 12 }, sheet: 'Sessions', saveLabel: 'Créer la session' });
+  draw();
+};
+function openSession(s, tab) {
+  if (!s) return;
+  tab = tab || 'details';
+  const st = sessionStats(s);
+  const STATUTS = ['Inscrit', 'Confirmé', 'Annulé', 'Présent', 'Absent'];
+  const link = `${D.agenda}?session=${encodeURIComponent(s.id)}`;
+  const insHtml = st.ins.length ? `<div class="tscroll"><table class="t"><thead><tr><th>Participant</th><th>Statut</th><th>Rappels</th></tr></thead><tbody>${st.ins.sort((a, b) => fullName(a).localeCompare(fullName(b))).map(i => `<tr><td data-l="Participant"><b>${esc(fullName(i))}</b><div class="muted">${esc(i.email)}${i.telephone ? ' · ' + esc(i.telephone) : ''} · ${esc(String(i.langue || 'fr').toUpperCase())}</div></td>
+      <td data-l="Statut"><select class="select" data-ins="${esc(i.id)}" aria-label="Statut de ${esc(fullName(i))}" style="min-height:38px;padding:6px 10px">${STATUTS.map(x => `<option ${i.statut === x ? 'selected' : ''}>${x}</option>`).join('')}</select>${i.date_reponse ? `<div class="muted">Réponse le ${esc(i.date_reponse)}</div>` : ''}</td>
+      <td data-l="Rappels" class="muted">${[i.rappel_J3 && 'J-3 envoyé', i.rappel_J1 && 'J-1 envoyé'].filter(Boolean).join(', ') || '–'}</td></tr>`).join('')}</tbody></table></div>` : '<p class="sub">Aucune inscription pour le moment.</p>';
+  openDrawer({ title: stitle(s), sub: `${s.type || ''} · ${fdate(s.date)} · ${st.actifs} inscrit${st.actifs > 1 ? 's' : ''}${st.places ? ' sur ' + st.places : ''}`,
+    body: `<div class="tabs" role="tablist"><button role="tab" type="button" data-tab="details" aria-selected="${tab === 'details'}">Détails</button><button role="tab" type="button" data-tab="ins" aria-selected="${tab === 'ins'}">Inscrits (${st.ins.length})</button></div>
+      <div data-pane="details" ${tab === 'details' ? '' : 'hidden'}><form id="dform" novalidate>${fieldsHtml(SESSION_FIELDS, s)}</form>
+        <div class="help">Lien d'inscription direct à partager : <code>${esc(link)}</code> <button class="btn btn-ghost btn-sm" type="button" id="cp-link">Copier</button></div></div>
+      <div data-pane="ins" ${tab === 'ins' ? '' : 'hidden'}>${insHtml}</div>`,
+    foot: `<button class="btn btn-danger" type="button" id="d-del">Supprimer</button><div class="r"><button class="btn btn-ghost" type="button" id="d-cancel">Fermer</button><button class="btn btn-primary" type="button" id="d-save">Enregistrer</button></div>`,
+    onOpen: () => {
+      const scope = $('#d-body'), ms = mountMulti(SESSION_FIELDS, s, scope);
+      scope.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { scope.querySelectorAll('[data-tab]').forEach(x => x.setAttribute('aria-selected', x === b)); scope.querySelectorAll('[data-pane]').forEach(p => p.hidden = p.dataset.pane !== b.dataset.tab); $('#d-save').style.visibility = b.dataset.tab === 'details' ? '' : 'hidden'; });
+      if (tab !== 'details') $('#d-save').style.visibility = 'hidden';
+      $('#cp-link').onclick = () => navigator.clipboard.writeText(link).then(() => toast('Lien copié'));
+      $('#d-cancel').onclick = closeDrawer;
+      $('#d-save').onclick = async () => { const v = readFields(SESSION_FIELDS, scope, ms); if (!v) return; try { await guard(() => save('Sessions', Object.assign({}, s, v))); closeDrawer(); refresh(); } catch (_) {} };
+      $('#d-del').onclick = async () => { if (!confirm(`Supprimer « ${stitle(s)} » ? Les ${st.ins.length} inscriptions resteront dans la base mais ne seront plus rattachées.`)) return; try { await guard(() => remove('Sessions', s.id, 'Session supprimée')); closeDrawer(); refresh(); } catch (_) {} };
+      scope.querySelectorAll('[data-ins]').forEach(sel => sel.onchange = async () => { const i = S.Inscriptions.find(x => x.id === sel.dataset.ins); try { await guard(() => save('Inscriptions', Object.assign({}, i, { statut: sel.value }), 'Statut mis à jour')); refresh(); } catch (_) { sel.value = i.statut; } });
+    } });
+}
+
+// ---------- Emails (templates) ----------
+const TPL_GROUPS = [
+  ['Demandeurs', ['demande_recue', 'mise_en_relation_demandeur'], 'Envoyés dans les langues choisies par le demandeur.'],
+  ['Contacts', ['accord_contact', 'mise_en_relation_contact'], 'Envoyés dans la langue du contact (français ou anglais).'],
+  ['Participants', ['inscription_confirmee', 'rappel_j3', 'rappel_j1', 'annulation_participant'], 'Envoyés en français ou en anglais selon la langue de l’inscription.'],
+  ['Gestionnaire', ['gestionnaire_nouvelle_demande', 'gestionnaire_propositions', 'gestionnaire_reponse_contact', 'gestionnaire_nouvelle_inscription', 'gestionnaire_annulation'], 'Notifications envoyées à l’adresse du gestionnaire.']
+];
+const TPL_NAMES = { demande_recue: 'Accusé de réception de la demande', mise_en_relation_demandeur: 'Coordonnées du contact', accord_contact: "Demande d'accord au contact", mise_en_relation_contact: 'Présentation du demandeur',
+  inscription_confirmee: "Confirmation d'inscription", rappel_j3: 'Rappel 3 jours avant', rappel_j1: 'Rappel la veille', annulation_participant: "Confirmation d'annulation",
+  gestionnaire_nouvelle_demande: 'Nouvelle demande', gestionnaire_propositions: 'Propositions à valider', gestionnaire_reponse_contact: "Réponse d'un contact", gestionnaire_nouvelle_inscription: 'Nouvelle inscription', gestionnaire_annulation: 'Annulation' };
+const TPL_VARS = { demande_recue: ['prenom'], mise_en_relation_demandeur: ['prenom', 'contact_prenom', 'details_contact'], mise_en_relation_contact: ['prenom', 'demandeur_prenom', 'details_demandeur'],
+  accord_contact: ['prenom', 'demandeur_prenom', 'details_demandeur', 'lien_accepter', 'lien_refuser'], inscription_confirmee: ['prenom', 'titre', 'details_session', 'lien_annuler'],
+  rappel_j3: ['prenom', 'titre', 'details_session', 'lien_confirmer', 'lien_annuler'], rappel_j1: ['prenom', 'titre', 'details_session', 'lien_confirmer', 'lien_annuler'], annulation_participant: ['prenom', 'titre', 'lien_agenda'],
+  gestionnaire_nouvelle_demande: ['nom_complet', 'details_demandeur', 'lien_admin'], gestionnaire_propositions: ['nb', 'nb_demandes', 'liste_propositions', 'lien_admin'], gestionnaire_reponse_contact: ['contact_nom', 'reponse', 'demandeur_nom', 'suite', 'lien_admin'],
+  gestionnaire_nouvelle_inscription: ['nom_complet', 'email', 'titre', 'nb_inscrits', 'places_info', 'details_session', 'lien_admin'], gestionnaire_annulation: ['nom_complet', 'email', 'titre', 'moment', 'nb_inscrits', 'places_info', 'lien_admin'] };
+const VAR_HELP = { prenom: 'Prénom du destinataire', contact_prenom: 'Prénom du contact', demandeur_prenom: 'Prénom du demandeur', titre: 'Titre de la session', nom_complet: 'Nom complet', email: 'Email', nb_inscrits: 'Nombre d’inscrits', places_info: '« sur 12 places »', moment: 'Moment de l’annulation', nb: 'Nombre de propositions', nb_demandes: 'Nombre de demandes', contact_nom: 'Nom du contact', demandeur_nom: 'Nom du demandeur', reponse: '« accepté » ou « refusé »', suite: 'Ce qui se passe ensuite' };
+let tplSel = { cle: 'demande_recue', langue: 'fr' };
+function sampleVars(cle, langue) {
+  const s = S.Sessions[0] || { titre: 'Atelier CV', date: today, heure_debut: '14:00', lieu: 'Toulouse' };
+  const d = S.Demandeurs[0] || { prenom: 'Karim', nom: 'Exemple', metiers: '', langues: '' };
+  const c = S.Contacts[0] || { prenom: 'Julie', nom: 'Exemple', email: 'julie@example.com' };
+  const isContact = ['accord_contact', 'mise_en_relation_contact'].includes(cle), isDem = /demande_recue|mise_en_relation_demandeur/.test(cle);
+  const L = norm(langue) === 'en' ? 'en' : 'fr';
+  const propHtml = TW.box(P, `<b>${esc(fullName(d))}</b> → ${esc(fullName(c))} <span style="color:#4A6266">(score 70)</span><br><span style="font-size:14px;color:#4A6266">métier commun : ${esc(lib('metier', d.metiers) || 'Développeur·se')}</span><br>${TW.button(P, 'Valider', '#')}${TW.button(P, 'Refuser', '#', true)}`);
+  return { prenom: isContact ? c.prenom : isDem ? d.prenom : (S.Inscriptions[0] || {}).prenom || 'Amina', contact_prenom: c.prenom, demandeur_prenom: d.prenom, titre: TW.sessionTitle(s, L),
+    details_session: TW.detailsSession(P, s, L), details_contact: TW.detailsContact(P, c), details_demandeur: TW.detailsDemandeur(P, d, L, S.Listes, cle === 'mise_en_relation_contact' || cle.startsWith('gestionnaire')),
+    liste_propositions: propHtml, nom_complet: fullName(d), email: d.email || 'exemple@example.org', nb_inscrits: 8, places_info: 'sur 12 places', moment: 'en réponse au rappel J-1', nb: 2, nb_demandes: 1,
+    contact_nom: fullName(c), demandeur_nom: fullName(d), reponse: 'accepté', suite: 'Les coordonnées ont été envoyées automatiquement au demandeur.',
+    lien_accepter: '#', lien_refuser: '#', lien_annuler: '#', lien_confirmer: '#', lien_agenda: D.agenda, lien_admin: '#' };
+}
+VIEWS.emails = () => {
+  const all = S.Templates;
+  const known = new Set(TPL_GROUPS.flatMap(g => g[1]));
+  const extra = [...new Set(all.map(t => t.cle).filter(k => k && !known.has(k)))];
+  $('#view').innerHTML = `<div class="head"><div><h1>Emails</h1><p>Modifiez le texte de chaque email. La mise en page et les couleurs s'appliquent automatiquement.</p></div></div>
+  <div class="tpl-pick field"><label for="tpl-sel">Email à modifier</label><select class="select" id="tpl-sel">${TPL_GROUPS.concat(extra.length ? [['Autres', extra, '']] : []).map(([g, keys]) => `<optgroup label="${esc(g)}">${keys.map(k => `<option value="${esc(k)}" ${tplSel.cle === k ? 'selected' : ''}>${esc(TPL_NAMES[k] || k)}</option>`).join('')}</optgroup>`).join('')}</select></div>
+  <div class="tpl-layout"><nav class="tpl-list" aria-label="Emails">${TPL_GROUPS.concat(extra.length ? [['Autres', extra, '']] : []).map(([g, keys]) => `<h3>${g}</h3>${keys.map(k => { const langs = all.filter(t => t.cle === k).map(t => t.langue); return `<button type="button" data-cle="${esc(k)}" aria-current="${tplSel.cle === k}"><b>${esc(TPL_NAMES[k] || k)}</b><span>${langs.length} langue${langs.length > 1 ? 's' : ''} : ${esc(langs.join(', ').toUpperCase())}</span></button>`; }).join('')}`).join('')}</nav>
+  <div id="tpl-ed"></div></div>`;
+  document.querySelectorAll('[data-cle]').forEach(b => b.onclick = () => { tplSel = { cle: b.dataset.cle, langue: 'fr' }; VIEWS.emails(); });
+  $('#tpl-sel').onchange = e => { tplSel = { cle: e.target.value, langue: 'fr' }; VIEWS.emails(); };
+  drawEditor();
+};
+function drawEditor() {
+  const cle = tplSel.cle, rows = S.Templates.filter(t => t.cle === cle).sort((a, b) => (a.langue === 'fr' ? -1 : b.langue === 'fr' ? 1 : a.langue.localeCompare(b.langue)));
+  if (!rows.find(t => t.langue === tplSel.langue)) tplSel.langue = rows[0] ? rows[0].langue : 'fr';
+  const t = rows.find(x => x.langue === tplSel.langue) || { id: `${cle}|fr`, cle, langue: 'fr', sujet: '', contenu: '', description: '' };
+  const group = TPL_GROUPS.find(g => g[1].includes(cle));
+  const langName = c => (S.Listes.find(l => norm(l.type) === 'langue' && norm(l.code) === norm(c)) || {}).libelle_fr || c.toUpperCase();
+  const missing = listes('langue').filter(l => !rows.some(r => norm(r.langue) === norm(l.code)));
+  const multi = group && group[0] === 'Demandeurs';
+  const rtl = TW.RTL.includes(norm(t.langue));
+  $('#tpl-ed').innerHTML = `<div class="panel" style="margin:0"><h2>${esc(TPL_NAMES[cle] || cle)}</h2><p class="sub">${esc(t.description || '')}${group && group[2] ? ' · ' + esc(group[2]) : ''}</p>
+    <div class="lang-pick field"><label for="lg-sel">Langue</label><select class="select" id="lg-sel">${rows.map(r => `<option value="${esc(r.langue)}" ${r.langue === tplSel.langue ? 'selected' : ''}>${esc(langName(r.langue))}</option>`).join('')}</select></div>
+    <div class="tabs lang-tabs" role="tablist">${rows.map(r => `<button type="button" role="tab" data-lg="${esc(r.langue)}" aria-selected="${r.langue === tplSel.langue}">${esc(langName(r.langue))}</button>`).join('')}</div><div class="lang-add">
+    ${(multi || ['fr', 'en'].some(c => !rows.some(r => r.langue === c))) && missing.length ? `<select class="select" id="add-lg" aria-label="Ajouter une langue" style="width:auto;min-height:38px;padding:4px 10px"><option value="">+ Ajouter une langue</option>${missing.filter(l => multi || ['fr', 'en'].includes(l.code)).map(l => `<option value="${esc(l.code)}">${esc(l.libelle_fr)}</option>`).join('')}</select>` : ''}</div>
+    <div class="tpl-edit"><div>
+      <div class="help">Cliquez sur une variable pour l'insérer. <code>**texte**</code> met en gras. Une ligne vide sépare deux paragraphes. Les boutons s'écrivent <code>[[Texte du bouton|lien_…]]</code>.</div>
+      <div class="field"><label for="tp-s">Objet de l'email</label><input class="input" id="tp-s" value="${esc(t.sujet)}" dir="${rtl ? 'rtl' : 'ltr'}"></div>
+      <div class="field"><label for="tp-c">Texte</label><div class="vars">${(TPL_VARS[cle] || []).map(v => `<button type="button" data-var="${v}" title="${esc(VAR_HELP[v] || (v.startsWith('lien_') ? 'Bouton' : v.startsWith('details_') || v.startsWith('liste_') ? 'Encadré automatique' : v))}">${v.startsWith('lien_') ? `[[…|${v}]]` : `{{${v}}}`}</button>`).join('')}</div>
+        <textarea class="textarea code" id="tp-c" dir="${rtl ? 'rtl' : 'ltr'}">${esc(t.contenu)}</textarea></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between">${t.langue !== 'fr' && S.Templates.some(x => x.id === t.id) ? '<button class="btn btn-danger" type="button" id="tp-del">Supprimer cette langue</button>' : '<span></span>'}<button class="btn btn-primary" type="button" id="tp-save">Enregistrer</button></div>
+    </div>
+    <div class="preview"><div class="pv-head"><b>Aperçu</b> · <span id="pv-subj"></span>${multi ? '<br><span class="muted" style="font-size:13px">Le demandeur reçoit un seul email avec une section par langue choisie.</span>' : ''}</div><iframe id="pv" title="Aperçu de l'email" sandbox=""></iframe></div></div></div>`;
+  const s = $('#tp-s'), c = $('#tp-c');
+  const preview = () => {
+    const vars = sampleVars(cle, t.langue);
+    try { const em = TW.email([{ cle, langue: t.langue, sujet: s.value, contenu: c.value }], cle, [t.langue], vars, P); $('#pv').srcdoc = em.html; $('#pv-subj').textContent = em.sujet; }
+    catch (e) { $('#pv-subj').textContent = 'Texte vide'; $('#pv').srcdoc = ''; }
+  };
+  let tmr; s.oninput = c.oninput = () => { clearTimeout(tmr); tmr = setTimeout(preview, 250); };
+  preview();
+  document.querySelectorAll('[data-lg]').forEach(b => b.onclick = () => { tplSel.langue = b.dataset.lg; drawEditor(); });
+  $('#lg-sel').onchange = e => { tplSel.langue = e.target.value; drawEditor(); };
+  document.querySelectorAll('[data-var]').forEach(b => b.onclick = () => {
+    const v = b.dataset.var, ins = v.startsWith('lien_') ? `[[Texte du bouton|${v}]]` : (v.startsWith('details_') || v.startsWith('liste_')) ? `\n\n{{${v}}}\n\n` : `{{${v}}}`;
+    const a = c.selectionStart, z = c.selectionEnd; c.setRangeText(ins, a, z, 'end'); c.focus(); preview();
+  });
+  const add = $('#add-lg');
+  if (add) add.onchange = () => { if (!add.value) return; const base = rows.find(r => r.langue === 'fr') || rows[0] || t; const nt = { id: `${cle}|${add.value}`, cle, langue: add.value, description: base.description, sujet: base.sujet, contenu: base.contenu }; S.Templates.push(nt); tplSel.langue = add.value; drawEditor(); toast('Langue ajoutée : traduisez le texte puis enregistrez.'); };
+  $('#tp-save').onclick = async () => {
+    if (!c.value.trim()) { toast('Le texte ne peut pas être vide.', true); return; }
+    try { await guard(() => save('Templates', Object.assign({}, t, { id: `${cle}|${t.langue}`, sujet: s.value, contenu: c.value }), 'Email enregistré')); VIEWS.emails(); } catch (_) {}
+  };
+  const del = $('#tp-del');
+  if (del) del.onclick = async () => { if (!confirm(`Supprimer la version ${langName(t.langue)} de cet email ?`)) return; try { await guard(() => remove('Templates', t.id, 'Langue supprimée')); tplSel.langue = 'fr'; VIEWS.emails(); } catch (_) {} };
+}
+
+// ---------- Paramètres ----------
+VIEWS.parametres = () => {
+  const PF = [
+    ['nom_asso', 'Nom de l’association'], ['slogan', 'Slogan'], ['couleur_principale', 'Couleur principale', 'color'], ['couleur_encre', 'Couleur du texte', 'color'],
+    ['logo_url', 'Adresse du logo', 'url'], ['site_url', 'Site web', 'url'], ['email_gestionnaire', 'Email du gestionnaire', 'email'], ['signature', 'Signature des emails'],
+    ['pied_de_page', 'Pied de page des emails'], ['n8n_url', 'Adresse publique de n8n', 'url'], ['score_minimum', 'Score minimum du matching', 'number'], ['max_propositions', 'Propositions maximum par demande', 'number']
+  ];
+  const val = k => (S.Parametres.find(r => r.id === k) || {}).valeur ?? P[k] ?? '';
+  const desc = k => (S.Parametres.find(r => r.id === k) || {}).description || '';
+  const fields = PF.map(([k, l, ty]) => ({ k, label: l, type: ty || 'text', hint: desc(k) }));
+  const row = Object.fromEntries(PF.map(([k]) => [k, val(k)]));
+  $('#view').innerHTML = `<div class="head"><div><h1>Paramètres</h1><p>Identité visuelle, adresses et listes du formulaire.</p></div></div>
+  <div class="panel"><h2>Liens à partager</h2><p class="sub">Publiez-les sur votre site, vos réseaux ou dans vos emails.</p><div class="links">
+    ${[['Formulaire de demande', D.demande], ['Agenda et inscriptions', D.agenda], ['Formulaire en anglais', D.demande + '?lang=en'], ['Agenda en anglais', D.agenda + '?lang=en']].map(([l, u]) => `<div class="row"><b>${l}</b><code>${esc(u)}</code><button class="btn btn-ghost btn-sm" type="button" data-copy="${esc(u)}">Copier</button><a class="btn btn-ghost btn-sm" href="${esc(u)}" target="_blank" rel="noopener">Ouvrir</a></div>`).join('')}
+    <div class="row"><b>Intégrer l'agenda à votre site</b><code>${esc(`<iframe src="${D.agenda}" style="width:100%;height:900px;border:0" title="Agenda Toulouse Way"></iframe>`)}</code><button class="btn btn-ghost btn-sm" type="button" data-copy="${esc(`<iframe src="${D.agenda}" style="width:100%;height:900px;border:0" title="Agenda Toulouse Way"></iframe>`)}">Copier</button></div></div></div>
+  <div class="panel"><h2>Identité et réglages</h2><p class="sub">Appliqués aux emails, aux formulaires publics et à cet espace.</p><form id="pform" novalidate>${fieldsHtml(fields, row)}</form><button class="btn btn-primary" type="button" id="p-save">Enregistrer les paramètres</button></div>
+  <div class="cols"><div class="panel"><div class="head" style="margin-bottom:10px"><div><h2>Métiers</h2><p class="sub" style="margin:0">Proposés dans le formulaire de demande et pour les contacts.</p></div><button class="btn btn-ghost btn-sm" type="button" data-add="metier">Ajouter</button></div><div id="l-metier"></div></div>
+  <div class="panel"><div class="head" style="margin-bottom:10px"><div><h2>Langues</h2><p class="sub" style="margin:0">Langues proposées aux demandeurs.</p></div><button class="btn btn-ghost btn-sm" type="button" data-add="langue">Ajouter</button></div><div id="l-langue"></div></div></div>`;
+  const scope = $('#pform'); mountMulti(fields, row, scope);
+  document.querySelectorAll('[data-copy]').forEach(b => b.onclick = () => navigator.clipboard.writeText(b.dataset.copy).then(() => toast('Copié')));
+  $('#p-save').onclick = async () => {
+    const v = readFields(fields, scope, {}); if (!v) return;
+    const changed = PF.filter(([k]) => String(v[k]) !== String(val(k)));
+    if (!changed.length) { toast('Aucune modification.'); return; }
+    try { for (const [k] of changed) await guard(() => save('Parametres', { id: k, valeur: String(v[k]), description: desc(k) }, false)); toast('Paramètres enregistrés'); VIEWS.parametres(); } catch (_) {}
+  };
+  for (const type of ['metier', 'langue']) {
+    const rows = listes(type);
+    $('#l-' + type).innerHTML = `<div class="tscroll"><table class="t"><thead><tr><th>${type === 'metier' ? 'Métier' : 'Langue'}</th><th>${type === 'metier' ? 'Secteur' : 'Nom natif'}</th></tr></thead><tbody>${rows.map(r => `<tr class="click" tabindex="0" data-lid="${esc(r.id)}"><td data-l="Libellé"><b>${esc(r.libelle_fr)}</b><div class="muted">${esc(r.libelle_en)} · code ${esc(r.code)}</div></td><td data-l="${type === 'metier' ? 'Secteur' : 'Nom natif'}">${esc(type === 'metier' ? String(r.groupe || '').split('|')[0] : r.libelle_natif)}</td></tr>`).join('')}</tbody></table></div>`;
+  }
+  const LF = type => [{ k: 'libelle_fr', label: 'Libellé en français', req: true }, { k: 'libelle_en', label: 'Libellé en anglais', req: true },
+    { k: 'code', label: 'Code', req: true, hint: type === 'langue' ? 'Code ISO à 2 lettres (ex. es). Il relie la langue aux emails traduits.' : 'Identifiant court sans espace (ex. dev-web). Ne le changez plus ensuite.' },
+    type === 'metier' ? { k: 'groupe', label: 'Secteur', hint: 'Format : « Secteur en français | Sector in English »' } : { k: 'libelle_natif', label: 'Nom dans la langue elle-même' },
+    { k: 'ordre', label: "Ordre d'affichage", type: 'number' }];
+  const editL = (type, r) => formDrawer({ title: r ? r.libelle_fr : (type === 'metier' ? 'Nouveau métier' : 'Nouvelle langue'), fields: LF(type), row: r || { type, ordre: listes(type).length + 1 }, sheet: 'Listes', del: !!r,
+    delMsg: 'Supprimer cet élément de la liste ? Les demandes existantes garderont le code.', onSaved: () => {} });
+  document.querySelectorAll('[data-add]').forEach(b => b.onclick = () => editL(b.dataset.add, null));
+  document.querySelectorAll('[data-lid]').forEach(tr => { const r = S.Listes.find(x => x.id === tr.dataset.lid); const open = () => editL(norm(r.type), r); tr.onclick = open; tr.onkeydown = e => { if (e.key === 'Enter') open(); }; });
+};
+</script>
+</body>
+</html>

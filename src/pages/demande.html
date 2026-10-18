@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Demande de mise en relation – Toulouse Way</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<style>
+/*__CSS__*/
+.hero{background:var(--ink);color:#fff;padding:0 20px 120px;position:relative;overflow:hidden}
+.topbar{max-width:880px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+.logo{display:inline-flex;background:#fff;border-radius:12px;padding:8px 12px}
+.logo img{height:36px;display:block}
+.lang{display:flex;border:1.5px solid rgba(255,255,255,.35);border-radius:999px;overflow:hidden}
+.lang a{color:#fff;text-decoration:none;padding:6px 14px;font-weight:700;font-size:14px}
+.lang a[aria-current=true]{background:#fff;color:var(--ink)}
+.hero-in{max-width:880px;margin:0 auto;padding-top:40px;position:relative;z-index:1}
+.hero h1{font-size:clamp(34px,6vw,58px);font-weight:800;max-width:15ch}
+.hero p{font-size:19px;max-width:52ch;color:#D8E3E4;margin:18px 0 0}
+.path{position:absolute;inset-inline:0;bottom:24px;width:100%;height:120px;pointer-events:none}
+main{max-width:880px;margin:-84px auto 0;padding:0 16px 48px;position:relative;z-index:2}
+.sheet{background:#fff;border-radius:var(--r-lg);box-shadow:var(--shadow);padding:34px clamp(20px,4vw,44px)}
+fieldset{border:0;margin:0 0 10px;padding:0}
+legend{font-family:var(--f-display);font-weight:700;font-size:22px;margin-bottom:6px;padding:0;float:left;width:100%}
+legend+*{clear:both}
+.legend-hint{color:var(--muted);margin:0 0 20px}
+.section+.section{border-top:1px solid var(--line);padding-top:26px;margin-top:8px}
+.actions{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-top:10px}
+.actions .note{color:var(--muted);font-size:14px}
+.done{text-align:center;padding:20px 0}
+.done .mark{width:64px;height:64px;border-radius:50%;background:var(--ok-soft);color:var(--ok);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 16px}
+.done h2{font-size:30px;margin-bottom:10px}
+.done p{max-width:46ch;margin:0 auto 10px;color:var(--ink-2)}
+.alert{background:var(--err-soft);color:var(--err);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:16px;display:none}
+footer{text-align:center;color:var(--muted);font-size:14px;padding:0 16px 32px}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="topbar">
+    <a class="logo" id="logo-link"><img id="logo" alt=""></a>
+    <nav class="lang" aria-label="Langue / Language"><a href="?lang=fr" data-l="fr">FR</a><a href="?lang=en" data-l="en">EN</a></nav>
+  </div>
+  <div class="hero-in">
+    <h1 data-t="title"></h1>
+    <p data-t="intro"></p>
+  </div>
+  <svg class="path" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true"><path d="M-10 92 C 180 30, 320 118, 520 70 S 860 10, 1030 58 S 1180 96, 1215 60" fill="none" stroke="var(--orange)" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 14"/></svg>
+</header>
+<main>
+  <div class="sheet" id="sheet">
+    <form id="f" novalidate>
+      <div class="alert" id="alert" role="alert"></div>
+      <fieldset class="section">
+        <legend data-t="s1"></legend>
+        <p class="legend-hint" data-t="s1h"></p>
+        <div class="grid-2">
+          <div class="field"><label for="prenom"><span data-t="prenom"></span> <span class="req">*</span></label><input class="input" id="prenom" name="prenom" autocomplete="given-name" required maxlength="80"><span class="err-msg" data-t="required"></span></div>
+          <div class="field"><label for="nom"><span data-t="nom"></span> <span class="req">*</span></label><input class="input" id="nom" name="nom" autocomplete="family-name" required maxlength="80"><span class="err-msg" data-t="required"></span></div>
+          <div class="field"><label for="email"><span data-t="email"></span> <span class="req">*</span></label><input class="input" id="email" name="email" type="email" autocomplete="email" required maxlength="120"><span class="err-msg" data-t="emailErr"></span></div>
+          <div class="field"><label for="telephone" data-t="tel"></label><input class="input" id="telephone" name="telephone" type="tel" autocomplete="tel" maxlength="30"></div>
+          <div class="field"><label for="ville" data-t="ville"></label><input class="input" id="ville" name="ville" autocomplete="address-level2" maxlength="80"></div>
+        </div>
+      </fieldset>
+      <fieldset class="section">
+        <legend data-t="s2"></legend>
+        <p class="legend-hint" data-t="s2h"></p>
+        <div class="field" id="f-langues"><span class="label" id="l-langues"><span data-t="langues"></span> <span class="req">*</span></span><span class="hint" data-t="languesH"></span><div id="ms-langues"></div><span class="err-msg" data-t="chooseOne"></span></div>
+        <div class="field" id="f-metiers"><span class="label" id="l-metiers"><span data-t="metiers"></span> <span class="req">*</span></span><span class="hint" data-t="metiersH"></span><div id="ms-metiers"></div><span class="err-msg" data-t="chooseOne"></span></div>
+        <div class="field"><label for="parcours" data-t="parcours"></label><span class="hint" data-t="parcoursH"></span><textarea class="textarea" id="parcours" name="parcours" maxlength="800"></textarea></div>
+      </fieldset>
+      <div class="section">
+        <div class="field" id="f-rgpd"><label class="check"><input type="checkbox" id="rgpd" required><span data-t="rgpd"></span></label><span class="err-msg" data-t="rgpdErr"></span></div>
+        <div class="actions"><button class="btn btn-primary" type="submit" id="send" data-t="send"></button><span class="note" data-t="note"></span></div>
+      </div>
+    </form>
+  </div>
+</main>
+<footer id="foot"></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>/*__MS__*/</script>
+<script>
+const D = /*__DATA__*/null;
+const I18N = {
+  fr: { title: 'Rencontrez les bonnes personnes à Toulouse', intro: 'Décrivez votre projet professionnel : nous vous mettons en relation avec des membres de notre réseau qui connaissent votre métier.',
+    s1: 'Vos coordonnées', s1h: 'Pour que nous puissions vous écrire.', prenom: 'Prénom', nom: 'Nom', email: 'Email', tel: 'Téléphone', ville: 'Ville où vous habitez',
+    s2: 'Votre projet', s2h: 'Ces informations nous aident à trouver les bons contacts.', langues: 'Langues parlées', languesH: 'Nous vous écrirons dans ces langues. Plusieurs choix possibles.',
+    metiers: 'Métiers recherchés', metiersH: "Jusqu'à 5 choix. Tapez pour filtrer la liste.", parcours: 'Votre parcours en quelques lignes', parcoursH: 'Formation, expérience, ce que vous recherchez.',
+    rgpd: "J'accepte que Toulouse Way utilise ces informations pour me mettre en relation avec des membres de son réseau. Je peux demander leur suppression à tout moment.",
+    send: 'Envoyer ma demande', sending: 'Envoi…', note: 'Réponse sous quelques jours.', required: 'Ce champ est obligatoire.', emailErr: 'Indiquez une adresse email valide, par exemple nom@exemple.fr.',
+    chooseOne: 'Choisissez au moins une option.', rgpdErr: 'Cochez cette case pour envoyer votre demande.', choose: 'Choisir…', search: 'Rechercher…', empty: 'Aucun résultat', remove: 'Retirer',
+    doneT: 'Demande envoyée', doneP: 'Merci {p} ! Un email de confirmation vient de vous être envoyé. Nous revenons vers vous dès qu’une mise en relation est possible.', doneA: "Voir l'agenda des formations",
+    fail: "L'envoi n'a pas abouti. Vérifiez votre connexion puis réessayez.", fixErrors: 'Quelques champs sont à compléter.' },
+  en: { title: 'Meet the right people in Toulouse', intro: 'Tell us about your career plans: we will introduce you to members of our network who know your field.',
+    s1: 'Your details', s1h: 'So that we can write to you.', prenom: 'First name', nom: 'Last name', email: 'Email', tel: 'Phone', ville: 'City you live in',
+    s2: 'Your project', s2h: 'This helps us find the right contacts.', langues: 'Languages you speak', languesH: 'We will write to you in these languages. Choose as many as you like.',
+    metiers: 'Jobs you are looking for', metiersH: 'Up to 5 choices. Type to filter the list.', parcours: 'Your background in a few lines', parcoursH: 'Education, experience, what you are looking for.',
+    rgpd: 'I agree that Toulouse Way may use this information to introduce me to members of its network. I can ask for it to be deleted at any time.',
+    send: 'Send my request', sending: 'Sending…', note: 'We reply within a few days.', required: 'This field is required.', emailErr: 'Enter a valid email address, for example name@example.com.',
+    chooseOne: 'Choose at least one option.', rgpdErr: 'Tick this box to send your request.', choose: 'Choose…', search: 'Search…', empty: 'No results', remove: 'Remove',
+    doneT: 'Request sent', doneP: 'Thank you {p}! A confirmation email is on its way. We will get back to you as soon as an introduction is possible.', doneA: 'See the training calendar',
+    fail: 'Sending failed. Check your connection and try again.', fixErrors: 'A few fields need your attention.' }
+};
+const lang = D.lang === 'en' ? 'en' : 'fr', t = I18N[lang];
+document.documentElement.lang = lang;
+document.title = (lang === 'en' ? 'Networking request' : 'Demande de mise en relation') + ' – ' + D.P.nom_asso;
+document.documentElement.style.setProperty('--orange', D.P.couleur_principale);
+document.documentElement.style.setProperty('--ink', D.P.couleur_encre);
+document.querySelectorAll('[data-t]').forEach(el => el.textContent = t[el.dataset.t]);
+document.querySelectorAll('.lang a').forEach(a => a.setAttribute('aria-current', a.dataset.l === lang));
+logo.src = D.P.logo_url; logo.alt = D.P.nom_asso; document.getElementById('logo-link').href = D.P.site_url;
+foot.textContent = D.P.slogan + ' · ' + D.P.nom_asso;
+
+const msL = MultiSelect(document.getElementById('ms-langues'), { labelledby: 'l-langues', placeholder: t.choose, search: t.search, empty: t.empty, remove: t.remove,
+  options: D.langues.map(l => ({ value: l.code, label: lang === 'en' ? l.en : l.fr, natif: l.natif })), onChange: () => valid('f-langues', msL.get().length) });
+const msM = MultiSelect(document.getElementById('ms-metiers'), { labelledby: 'l-metiers', placeholder: t.choose, search: t.search, empty: t.empty, remove: t.remove, max: 5,
+  options: D.metiers.map(m => ({ value: m.code, label: lang === 'en' ? (m.en || m.fr) : m.fr, group: (String(m.groupe || '').split('|')[lang === 'en' ? 1 : 0] || '').trim() })), onChange: () => valid('f-metiers', msM.get().length) });
+
+function valid(id, ok) { document.getElementById(id).classList.toggle('invalid', !ok); return !!ok; }
+function toast(msg, err) { const el = document.getElementById('toast'); el.textContent = msg; el.className = 'toast show' + (err ? ' err' : ''); setTimeout(() => el.className = 'toast', 4200); }
+const emailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+const f = document.getElementById('f');
+['prenom', 'nom', 'email'].forEach(n => f[n].addEventListener('blur', () => f[n].closest('.field').classList.toggle('invalid', n === 'email' ? !emailOk(f[n].value.trim()) : !f[n].value.trim())));
+f.addEventListener('submit', async e => {
+  e.preventDefault();
+  const v = n => f[n].value.trim();
+  let ok = true; const firstBad = [];
+  for (const n of ['prenom', 'nom']) { const bad = !v(n); f[n].closest('.field').classList.toggle('invalid', bad); if (bad) { ok = false; firstBad.push(f[n]); } }
+  const be = !emailOk(v('email')); f.email.closest('.field').classList.toggle('invalid', be); if (be) { ok = false; firstBad.push(f.email); }
+  if (!valid('f-langues', msL.get().length)) { ok = false; firstBad.push(msL); }
+  if (!valid('f-metiers', msM.get().length)) { ok = false; firstBad.push(msM); }
+  if (!valid('f-rgpd', f.rgpd.checked)) { ok = false; firstBad.push(f.rgpd); }
+  if (!ok) { alertBox(t.fixErrors); firstBad[0].focus(); return; }
+  alertBox('');
+  send.disabled = true; send.textContent = t.sending;
+  try {
+    const r = await fetch(D.submit, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+      prenom: v('prenom'), nom: v('nom'), email: v('email'), telephone: v('telephone'), ville: v('ville'), parcours: v('parcours'),
+      langues: msL.get(), metiers: msM.get(), langue_formulaire: lang, consentement: true }) });
+    const res = await r.json().catch(() => ({}));
+    if (!r.ok || !res.ok) throw new Error(res.message || 'fail');
+    document.getElementById('sheet').innerHTML = `<div class="done" role="status"><div class="mark" aria-hidden="true">✓</div><h2>${t.doneT}</h2><p>${t.doneP.replace('{p}', v('prenom').replace(/[<>&]/g, ''))}</p>${D.agenda ? `<p><a class="btn btn-ghost" href="${D.agenda}?lang=${lang}">${t.doneA}</a></p>` : ''}</div>`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err) {
+    alertBox(t.fail); send.disabled = false; send.textContent = t.send;
+  }
+});
+function alertBox(msg) { const a = document.getElementById('alert'); a.textContent = msg; a.style.display = msg ? 'block' : 'none'; }
+</script>
+</body>
+</html>

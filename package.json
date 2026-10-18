@@ -1,0 +1,12 @@
+{
+  "name": "toulouse-way-automation",
+  "version": "2.0.0",
+  "description": "n8n + Google Sheets + Gmail automation for the Toulouse Way association: networking introductions, trainings and events, management space.",
+  "private": true,
+  "scripts": {
+    "build": "python3 tools/build-sheet.py && node tools/build-workflows.js",
+    "build:workflows": "node tools/build-workflows.js",
+    "test": "node tools/test.js",
+    "screenshots": "node tools/build-pages.js && node tools/demo-data.js && node tools/render-emails.js && python3 tools/screenshots.py"
+  }
+}

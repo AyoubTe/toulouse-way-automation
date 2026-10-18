@@ -1,0 +1,5 @@
+build/
+seed/seed.json
+node_modules/
+__pycache__/
+.DS_Store
